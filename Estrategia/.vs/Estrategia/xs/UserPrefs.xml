@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{74EB2159-2AD2-6968-2F4C-5943C4DC949E}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/celdasAdyacentes.cs">
+    <Files>
+      <File FileName="Assets/nieblaController.cs" Line="40" Column="44" />
+      <File FileName="Assets/scripts/mouseManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/unidades_parametros.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/celdasAdyacentes.cs" Line="18" Column="5" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
