@@ -1,10 +1,11 @@
 ﻿<Properties StartupConfiguration="{74EB2159-2AD2-6968-2F4C-5943C4DC949E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/mouseManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/playerController.cs">
     <Files>
-      <File FileName="Assets/nieblaController.cs" Line="17" Column="67" />
-      <File FileName="Assets/scripts/mouseManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/nieblaController.cs" Line="43" Column="10" />
+      <File FileName="Assets/scripts/mouseManager.cs" Line="42" Column="23" />
       <File FileName="Assets/scripts/unidades_parametros.cs" />
       <File FileName="Assets/scripts/celdasAdyacentes.cs" />
+      <File FileName="Assets/scripts/playerController.cs" Line="33" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

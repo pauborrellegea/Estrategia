@@ -68,6 +68,7 @@
     <Compile Include="Assets\Objects\Scripts\MovimientoCamara.cs" />
     <Compile Include="Assets\scripts\celdasAdyacentes.cs" />
     <Compile Include="Assets\scripts\mouseManager.cs" />
+    <Compile Include="Assets\scripts\playerController.cs" />
     <Compile Include="Assets\scripts\unidades_parametros.cs" />
     <Compile Include="Assets\unidades\basica\scripts\rotator.cs" />
     <None Include="Assets\unidades\espada\shaders\pbrDoublesided.shader" />
