@@ -32,7 +32,7 @@ public class mouseManager : MonoBehaviour
                 //Debug.Log("ourHitObject:" + ourHitObject.transform.position);
                 //Debug.Log("ourHitObject:" + ourHitObject.transform.tag);
 
-                if (hitInfo.transform.CompareTag("Player"))
+                if (hitInfo.transform.CompareTag("Player") && !hitInfo.collider.isTrigger)
                 {
                     //inSelectionUnit(hitInfo.transform.gameObject);
                     SelectUnit(hitInfo.transform);
