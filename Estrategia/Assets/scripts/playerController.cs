@@ -11,13 +11,14 @@ public class playerController : MonoBehaviour
     public GameObject unidadExploradora;
     public GameObject unidadOfensiva;
     public GameObject unidadDefensiva;
-
+    public bool baseObstaculizada;
 
 
     // Use this for initialization
     void Start()
     {
-        monedas = 300;
+        monedas = 30;
+        baseObstaculizada = false;
 
     }
 
@@ -25,7 +26,7 @@ public class playerController : MonoBehaviour
     void Update()
     {
 
-        if (true)
+        if (!baseObstaculizada)
         {
 
             if (Input.GetKeyDown(KeyCode.Q))
@@ -81,5 +82,29 @@ public class playerController : MonoBehaviour
 
 
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player") && !other.isTrigger)
+        {
+            baseObstaculizada = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player") && !other.isTrigger)
+        {
+            baseObstaculizada = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && !other.isTrigger)
+        {
+            baseObstaculizada = false;
+        }
     }
 }
