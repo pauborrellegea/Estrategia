@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 116371438402019151}
   - component: {fileID: 4727722495777457684}
   - component: {fileID: 6881072800178051462}
-  - component: {fileID: 4071030076555695540}
   - component: {fileID: 329227979348440840}
   m_Layer: 0
   m_Name: explorador
@@ -204,18 +203,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &4071030076555695540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 329227979348440841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13a66662dc2fc444c85a438f374c08c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &329227979348440840
 BoxCollider:
   m_ObjectHideFlags: 0

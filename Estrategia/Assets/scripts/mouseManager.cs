@@ -5,7 +5,7 @@ using UnityEngine;
 public class mouseManager : MonoBehaviour
 {
 
-    [HideInInspector] public Transform seletedUnit;
+    [HideInInspector] public static Transform seletedUnit;
     [HideInInspector] public bool prueba;
 
     // Start is called before the first frame update
@@ -28,9 +28,8 @@ public class mouseManager : MonoBehaviour
             {
                 GameObject ourHitObject = hitInfo.collider.transform.gameObject;
 
-                //Debug.Log("Raycast hit:" + hitInfo.transform.position);
-                //Debug.Log("ourHitObject:" + ourHitObject.transform.position);
-                //Debug.Log("ourHitObject:" + ourHitObject.transform.tag);
+                //Debug.Log("Raycast hit: " + hitInfo.transform.position);
+                //Debug.Log("ourHitObject: " + hitInfo.transform.tag);
 
                 if (hitInfo.transform.CompareTag("Player") && !hitInfo.collider.isTrigger)
                 {
@@ -70,6 +69,7 @@ public class mouseManager : MonoBehaviour
 
     public void MoveUnit(Transform cube)
     {
+
         if (cube.position.x-5 == seletedUnit.position.x && (cube.position.z-5 == seletedUnit.position.z+10 || cube.position.z-5 == seletedUnit.position.z - 10))
         {
             seletedUnit.position = new Vector3(cube.position.x - 5, seletedUnit.position.y, cube.position.z - 5);

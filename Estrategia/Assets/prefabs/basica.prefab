@@ -1540,7 +1540,6 @@ GameObject:
   - component: {fileID: 8817780609227074887}
   - component: {fileID: 6264873088619786434}
   - component: {fileID: 2355068980381046533}
-  - component: {fileID: 5867508635557310155}
   - component: {fileID: 4298628753156009658}
   m_Layer: 0
   m_Name: basica
@@ -1640,18 +1639,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &5867508635557310155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4298628753156009659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13a66662dc2fc444c85a438f374c08c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &4298628753156009658
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -46,4 +46,69 @@ public class celdasAdyacentes : MonoBehaviour
         }
     }
     */
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            MeshRenderer mr = transform.GetComponent<MeshRenderer>();
+            mr.enabled = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            MeshRenderer mr = transform.GetComponent<MeshRenderer>();
+            mr.enabled = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            MeshRenderer mr = transform.GetComponent<MeshRenderer>();
+            mr.enabled = false;
+        }
+    }
+    
+    /*
+    private void OnTriggerEnter(Collider other)
+    {
+        GameObject go = other.transform.Find("pos").gameObject;
+        if (other.gameObject.tag == "Player")
+        {
+            go.SetActive(false);
+        }
+        if (other.gameObject.tag == "ground")
+        {
+            MeshRenderer mr = go.GetComponent<MeshRenderer>();
+            mr.enabled = true;
+        }
+
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        GameObject go = other.transform.Find("pos").gameObject;
+        if (other.gameObject.tag == "ground")
+        {
+            MeshRenderer mr = go.GetComponent<MeshRenderer>();
+            mr.enabled = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        GameObject go = other.transform.Find("pos").gameObject;
+        if (other.gameObject.tag == "ground")
+        {
+            go.SetActive(true);
+
+            MeshRenderer mr = go.GetComponent<MeshRenderer>();
+            mr.enabled = false;
+        }
+    }*/
 }

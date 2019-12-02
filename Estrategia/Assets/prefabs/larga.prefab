@@ -4294,7 +4294,6 @@ GameObject:
   - component: {fileID: 7038213169265862645}
   - component: {fileID: 3649576376655001862}
   - component: {fileID: 5767547636528716095}
-  - component: {fileID: 1872223347830687367}
   - component: {fileID: 3459564049486206902}
   m_Layer: 0
   m_Name: larga
@@ -4391,18 +4390,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &1872223347830687367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3459564049486206901}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13a66662dc2fc444c85a438f374c08c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &3459564049486206902
 BoxCollider:
   m_ObjectHideFlags: 0
