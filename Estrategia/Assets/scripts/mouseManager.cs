@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class mouseManager : MonoBehaviour
 {
+    private GridController gridController;
 
-    [HideInInspector] public static Transform seletedUnit;
-    [HideInInspector] public bool prueba;
+    private static GameObject selectedUnit;
+    //[HideInInspector] public bool prueba;
 
-    // Start is called before the first frame update
-    void Start()
+    private int selectedX, selectedZ;
+
+    private void Awake()
     {
-        
+        GameObject escenario = GameObject.Find("Escenario");
+
+        gridController = escenario.GetComponent<GridController>();
     }
 
     // Update is called once per frame
@@ -26,11 +30,32 @@ public class mouseManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out hitInfo))
             {
-                GameObject ourHitObject = hitInfo.collider.transform.gameObject;
+                Transform hitTransform = hitInfo.transform;
+
+                //coordenadas de unidad o de casilla
+                selectedX = (int)hitTransform.position.x;
+                selectedZ = (int)hitTransform.position.z;
+
+
+
+                GameObject selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
+
+                if (selection != null) //seleccionar
+                {
+                    selectedUnit = selection;
+                }
+                else //mover seleccion
+                {
+                    if (selectedUnit != null)
+                    {
+                        gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
+                        selectedUnit = null;
+                    }
+                }
 
                 //Debug.Log("Raycast hit: " + hitInfo.transform.position);
                 //Debug.Log("ourHitObject: " + hitInfo.transform.tag);
-
+                /*
                 if (hitInfo.transform.CompareTag("Player") && !hitInfo.collider.isTrigger)
                 {
                     //inSelectionUnit(hitInfo.transform.gameObject);
@@ -41,7 +66,7 @@ public class mouseManager : MonoBehaviour
                     //inDeselectionUnit(hitInfo.transform.gameObject);
                     MoveUnit(hitInfo.transform);
 
-                }
+                }*/
                 //Debug.Log("unidad elegida:" + seletedUnit.position);
 
 
@@ -50,6 +75,7 @@ public class mouseManager : MonoBehaviour
 
     }
 
+    /*
     public void inSelectionUnit(GameObject unit)
     {
         GameObject go = unit.transform.Find("x+1").gameObject;
@@ -60,23 +86,23 @@ public class mouseManager : MonoBehaviour
     }
     public void inDeselectionUnit(GameObject unit)
     {
-        GameObject go = seletedUnit.Find("x+1").gameObject;
+        GameObject go = selectedUnit.Find("x+1").gameObject;
         go.SetActive(false);
-        seletedUnit.Find("x-1").gameObject.SetActive(false);
-        seletedUnit.Find("y+1").gameObject.SetActive(false);
-        seletedUnit.Find("y-1").gameObject.SetActive(false);
+        selectedUnit.Find("x-1").gameObject.SetActive(false);
+        selectedUnit.Find("y+1").gameObject.SetActive(false);
+        selectedUnit.Find("y-1").gameObject.SetActive(false);
     }
 
     public void MoveUnit(Transform cube)
     {
 
-        if (cube.position.x-5 == seletedUnit.position.x && (cube.position.z-5 == seletedUnit.position.z+10 || cube.position.z-5 == seletedUnit.position.z - 10))
+        if (cube.position.x-5 == selectedUnit.position.x && (cube.position.z-5 == selectedUnit.position.z+10 || cube.position.z-5 == selectedUnit.position.z - 10))
         {
-            seletedUnit.position = new Vector3(cube.position.x - 5, seletedUnit.position.y, cube.position.z - 5);
+            selectedUnit.position = new Vector3(cube.position.x - 5, selectedUnit.position.y, cube.position.z - 5);
         }
-        else if (cube.position.z - 5 == seletedUnit.position.z && (cube.position.x - 5 == seletedUnit.position.x + 10 || cube.position.x - 5 == seletedUnit.position.x - 10))
+        else if (cube.position.z - 5 == selectedUnit.position.z && (cube.position.x - 5 == selectedUnit.position.x + 10 || cube.position.x - 5 == selectedUnit.position.x - 10))
         {
-            seletedUnit.position = new Vector3(cube.position.x - 5, seletedUnit.position.y, cube.position.z - 5);
+            selectedUnit.position = new Vector3(cube.position.x - 5, selectedUnit.position.y, cube.position.z - 5);
         }
         else
         {
@@ -88,19 +114,19 @@ public class mouseManager : MonoBehaviour
     public void SelectUnit(Transform unit)
     {
 
-        if (seletedUnit != null)
+        if (selectedUnit != null)
         {
-            seletedUnit.Find("circulo").gameObject.SetActive(false);
+            selectedUnit.Find("circulo").gameObject.SetActive(false);
         }
 
-        seletedUnit = unit;
-        seletedUnit.Find("circulo").gameObject.SetActive(true);
+        selectedUnit = unit;
+        selectedUnit.Find("circulo").gameObject.SetActive(true);
 
         //casillas posibles adyacentes
 
         //if(seletedUnit.Find("casillaX+1").gameObject.)
         //Debug.Log("no"+ seletedUnit.Find("casillaX+1").gameObject.get);
-    }
+    }*/
 
 
 }

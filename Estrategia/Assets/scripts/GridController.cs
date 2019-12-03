@@ -7,7 +7,10 @@ public class GridController : MonoBehaviour
     int rows = 17;
     int cols = 12;
 
-    private GameObject[,] gridObjects;
+    //Grids globales
+    private GameObject[,] gridCells;
+    private GameObject[,] gridUnits;
+
 
     //crear 
 
@@ -16,7 +19,8 @@ public class GridController : MonoBehaviour
     {
         //En awake se guardan las referencias de gameObjects de casillas en una matriz, con su posicion como indice
 
-        gridObjects = new GameObject[rows, cols];
+        gridCells = new GameObject[rows, cols];
+        gridUnits = new GameObject[rows, cols];
 
         for (int i = 0; i<transform.childCount; i++)
         {
@@ -29,7 +33,7 @@ public class GridController : MonoBehaviour
             int x = (int)child.localPosition.x;
             int y = (int)child.localPosition.z;
 
-            gridObjects[x, y] = child.gameObject;
+            gridCells[x, y] = child.gameObject;
             
             /*
             if (gridObjects[x, y] == null)
@@ -46,4 +50,38 @@ public class GridController : MonoBehaviour
     //con otras funciones se pueden crear mapas de influencia o 
     //hacer busqueda de profundidad para comprobar la visibilidad del jugador Y del enemigo (por separado)
     //tambien se puede hacer un pathfiding sencillo con esa bfs
+
+
+
+    public bool CanSpawnUnit(int x, int z)
+    {
+        return gridUnits[x, z] == null;
+    }
+
+    public void AddUnit(GameObject unit, int x, int z)
+    {
+        //puede que sea mejor instanciar unidades en un objeto hijo del escenario, y guardar todas las casillas en otro hijo
+        gridUnits[x, z] = unit;
+    }
+
+    public GameObject GetUnit(int x, int z)
+    {
+        return gridUnits[x, z];
+    }
+
+    public void MoveUnit(GameObject unit, int toX, int toZ)
+    {
+        //Esto deberia tener en cuenta mas cosas, y moverse suavemente
+        
+
+        //si se puede mover se mueve
+        if (gridUnits[toX, toZ] == null)
+        {
+            int x = (int)unit.transform.position.x;
+            int z = (int)unit.transform.position.z;
+            gridUnits[x, z] = null;
+            unit.transform.position = new Vector3(toX, 0, toZ);
+            gridUnits[toX, toZ] = unit;
+        }
+    }
 }

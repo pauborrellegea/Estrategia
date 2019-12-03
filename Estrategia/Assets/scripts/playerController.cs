@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
+    private GridController gridController;
+
     public static int monedas;
 
     public GameObject unidadBasica;
@@ -11,100 +13,95 @@ public class playerController : MonoBehaviour
     public GameObject unidadExploradora;
     public GameObject unidadOfensiva;
     public GameObject unidadDefensiva;
-    public bool baseObstaculizada;
+
+    private int spawnX, spawnZ;
 
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
-        monedas = 30;
-        baseObstaculizada = false;
+        GameObject escenario = GameObject.Find("Escenario");
 
+        gridController = escenario.GetComponent<GridController>();
+
+        monedas = 30;
+
+        spawnX = (int)transform.position.x;
+        spawnZ = (int)transform.position.z;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (!baseObstaculizada)
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (monedas >= 10)
             {
-                if (monedas >= 10)
+                if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    Instantiate(unidadBasica);
+                    GameObject newUnit = Instantiate(unidadBasica, transform.position, transform.rotation);
+                    gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 10;
                 }
-
             }
 
-            if (Input.GetKeyDown(KeyCode.W))
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            if (monedas >= 15)
             {
-                if (monedas >= 15)
+                if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    Instantiate(unidadDistancia);
+                    GameObject newUnit = Instantiate(unidadDistancia, transform.position, transform.rotation);
+                    gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 15;
                 }
-
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (monedas >= 20)
             {
-                if (monedas >= 20)
+                if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    Instantiate(unidadExploradora);
+                    GameObject newUnit = Instantiate(unidadExploradora, transform.position, transform.rotation);
+                    gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 20;
                 }
-
             }
 
-            if (Input.GetKeyDown(KeyCode.A))
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            if (monedas >= 35)
             {
-                if (monedas >= 35)
+                if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    Instantiate(unidadOfensiva);
+                    GameObject newUnit = Instantiate(unidadOfensiva, transform.position, transform.rotation);
+                    gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 35;
                 }
-
             }
 
-            if (Input.GetKeyDown(KeyCode.S))
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            if (monedas >= 35)
             {
-                if (monedas >= 35)
+                if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    Instantiate(unidadDefensiva);
+                    GameObject newUnit = Instantiate(unidadDefensiva, transform.position, transform.rotation);
+                    gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 35;
                 }
-
             }
+
         }
 
-
-
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.CompareTag("Player") && !other.isTrigger)
-        {
-            baseObstaculizada = true;
-        }
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player") && !other.isTrigger)
-        {
-            baseObstaculizada = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && !other.isTrigger)
-        {
-            baseObstaculizada = false;
-        }
     }
 }
