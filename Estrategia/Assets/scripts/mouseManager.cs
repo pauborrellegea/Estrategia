@@ -49,6 +49,7 @@ public class mouseManager : MonoBehaviour
                     if (selectedUnit != null)
                     {
                         gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
+                        Debug.Log("si");
                         selectedUnit = null;
                     }
                 }

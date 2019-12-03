@@ -62,7 +62,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\unidades\explorador\Assets\Scripts\Editor\NotificationWindow.cs" />
+    <Compile Include="Assets\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
+    <Compile Include="Assets\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>C:/Users/FRAN/Documents/GitHub/Estrategia/Estrategia/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>
