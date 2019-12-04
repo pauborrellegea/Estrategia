@@ -1619,8 +1619,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ataque: 5
-  vision: 2
+  vision: 3
   rangoDeAtaque: 1
+  rangoDeMovimiento: 3
   vida: 6
   coste: 10
 --- !u!54 &2355068980381046533

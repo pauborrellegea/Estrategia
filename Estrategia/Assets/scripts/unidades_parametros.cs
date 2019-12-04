@@ -7,6 +7,7 @@ public class unidades_parametros : MonoBehaviour
     public int ataque;
     public int vision;
     public int rangoDeAtaque;
+    public int rangoDeMovimiento;
     public int vida;
     public int coste;
 

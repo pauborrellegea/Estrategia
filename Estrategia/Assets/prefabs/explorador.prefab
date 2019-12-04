@@ -182,9 +182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322466589a6ab9543884da9771d2657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ataque: 10
-  vision: 1
-  rangoDeAtaque: 1
+  ataque: 0
+  vision: 6
+  rangoDeAtaque: 0
+  rangoDeMovimiento: 6
   vida: 10
   coste: 35
 --- !u!54 &6881072800178051462

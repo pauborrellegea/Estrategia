@@ -1438,6 +1438,7 @@ MonoBehaviour:
   ataque: 5
   vision: 2
   rangoDeAtaque: 4
+  rangoDeMovimiento: 2
   vida: 5
   coste: 25
 --- !u!54 &6347150338906399163

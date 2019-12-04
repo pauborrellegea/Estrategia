@@ -6,6 +6,8 @@ public class mouseManager : MonoBehaviour
 {
     private GridController gridController;
 
+    public GameObject circuloSeleccion;
+
     private static GameObject selectedUnit;
     //[HideInInspector] public bool prueba;
 
@@ -14,6 +16,8 @@ public class mouseManager : MonoBehaviour
     private void Awake()
     {
         GameObject escenario = GameObject.Find("Escenario");
+
+        circuloSeleccion.SetActive(false);
 
         gridController = escenario.GetComponent<GridController>();
     }
@@ -40,17 +44,27 @@ public class mouseManager : MonoBehaviour
 
                 GameObject selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
 
-                if (selection != null) //seleccionar
+                if (selection != null && selectedUnit !=selection) //seleccionar
                 {
                     selectedUnit = selection;
+                    circuloSeleccion.SetActive(true);
+                    circuloSeleccion.transform.position = selectedUnit.transform.position;
+
+                    gridController.SetMovement(selectedUnit);
                 }
                 else //mover seleccion
                 {
                     if (selectedUnit != null)
                     {
-                        gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
-                        Debug.Log("si");
-                        selectedUnit = null;
+                        if (gridController.CanMove(selectedX, selectedZ))
+                        {
+                            gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
+                            //Debug.Log("si");
+                            selectedUnit = null;
+                            circuloSeleccion.SetActive(false);
+
+                            gridController.SetMovement(null);
+                        }
                     }
                 }
 
