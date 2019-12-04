@@ -28,4 +28,14 @@ public class Casilla : MonoBehaviour
     {
         movement.SetActive(enable);
     }
+
+    public bool isGrass()
+    {
+        return type == CellType.GRASS;
+    }
+
+    public bool isForest()
+    {
+        return type == CellType.FOREST;
+    }
 }

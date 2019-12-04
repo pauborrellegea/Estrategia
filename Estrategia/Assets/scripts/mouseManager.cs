@@ -6,7 +6,10 @@ public class mouseManager : MonoBehaviour
 {
     private GridController gridController;
 
+    LayerMask layerMask;
+
     public GameObject circuloSeleccion;
+    public GameObject circuloHighlight;
 
     private static GameObject selectedUnit;
     //[HideInInspector] public bool prueba;
@@ -15,9 +18,12 @@ public class mouseManager : MonoBehaviour
 
     private void Awake()
     {
+        layerMask = LayerMask.GetMask("Default");
+
         GameObject escenario = GameObject.Find("Escenario");
 
         circuloSeleccion.SetActive(false);
+        circuloHighlight.SetActive(false);
 
         gridController = escenario.GetComponent<GridController>();
     }
@@ -25,9 +31,9 @@ public class mouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
+            circuloHighlight.SetActive(false);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             RaycastHit hitInfo;
@@ -44,7 +50,7 @@ public class mouseManager : MonoBehaviour
 
                 GameObject selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
 
-                if (selection != null && selectedUnit !=selection) //seleccionar
+                if (selection != null && selectedUnit != selection) //seleccionar
                 {
                     selectedUnit = selection;
                     circuloSeleccion.SetActive(true);
@@ -85,6 +91,33 @@ public class mouseManager : MonoBehaviour
                 //Debug.Log("unidad elegida:" + seletedUnit.position);
 
 
+            }
+        }
+        else
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit hitInfo;
+
+            if (Physics.Raycast(ray, out hitInfo))
+            {
+                Transform hitTransform = hitInfo.transform;
+
+                //coordenadas de unidad o de casilla
+                selectedX = (int)hitTransform.position.x;
+                selectedZ = (int)hitTransform.position.z;
+
+                circuloHighlight.transform.position = new Vector3(selectedX, 0, selectedZ);
+
+                //highlight
+                if (circuloSeleccion.transform.position!= circuloHighlight.transform.position)
+                    circuloHighlight.SetActive(true);
+                else
+                    circuloHighlight.SetActive(false);
+            }
+            else
+            {
+                circuloHighlight.SetActive(false);
             }
         }
 
