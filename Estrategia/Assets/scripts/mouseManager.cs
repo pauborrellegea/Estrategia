@@ -31,6 +31,8 @@ public class mouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //FALTA: ATACAR
+
         if (Input.GetMouseButtonDown(0))
         {
             circuloHighlight.SetActive(false);

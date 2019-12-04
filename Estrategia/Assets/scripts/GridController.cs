@@ -7,6 +7,8 @@ public class GridController : MonoBehaviour
     int rows = 17;
     int cols = 12;
 
+    int forestCost = 2;
+
     //Grids globales
     private Casilla[,] gridCells;
     private GameObject[,] gridUnits;
@@ -203,32 +205,64 @@ public class GridController : MonoBehaviour
                 {
                     if (!movementCells[x - 1, z] && range > 0)
                     {
-                        movementCells[x - 1, z] = true;
-                        queue.Enqueue(new int[3] { x - 1, z, range - 1 });
+                        if (gridCells[x - 1, z].isGrass())
+                        {
+                            movementCells[x - 1, z] = true;
+                            queue.Enqueue(new int[3] { x - 1, z, range - 1 });
+                        } else if (gridCells[x - 1, z].isForest() && range >= forestCost)
+                        {
+                            movementCells[x - 1, z] = true;
+                            queue.Enqueue(new int[3] { x - 1, z, range - forestCost });
+                        }
+                        
                     }
                 }
                 if (x < rows - 1)
                 {
                     if (!movementCells[x + 1, z] && range > 0)
                     {
-                        movementCells[x + 1, z] = true;
-                        queue.Enqueue(new int[3] { x + 1, z, range - 1 });
+                        if (gridCells[x + 1, z].isGrass())
+                        {
+                            movementCells[x + 1, z] = true;
+                            queue.Enqueue(new int[3] { x + 1, z, range - 1 });
+                        }
+                        else if (gridCells[x + 1, z].isForest() && range >= forestCost)
+                        {
+                            movementCells[x + 1, z] = true;
+                            queue.Enqueue(new int[3] { x + 1, z, range - forestCost });
+                        }
                     }
                 }
                 if (z > 0)
                 {
                     if (!movementCells[x, z - 1] && range > 0)
                     {
-                        movementCells[x, z - 1] = true;
-                        queue.Enqueue(new int[3] { x, z - 1, range - 1 });
+                        if (gridCells[x, z - 1].isGrass())
+                        {
+                            movementCells[x, z - 1] = true;
+                            queue.Enqueue(new int[3] { x, z - 1, range - 1 });
+                        }
+                        else if (gridCells[x, z - 1].isForest() && range >= forestCost)
+                        {
+                            movementCells[x, z - 1] = true;
+                            queue.Enqueue(new int[3] { x, z - 1, range - forestCost });
+                        }
                     }
                 }
                 if (z < cols - 1)
                 {
                     if (!movementCells[x, z + 1] && range > 0)
                     {
-                        movementCells[x, z + 1] = true;
-                        queue.Enqueue(new int[3] { x, z + 1, range - 1 });
+                        if (gridCells[x, z + 1].isGrass())
+                        {
+                            movementCells[x, z + 1] = true;
+                            queue.Enqueue(new int[3] { x, z + 1, range - 1 });
+                        }
+                        else if (gridCells[x, z + 1].isForest() && range >= forestCost)
+                        {
+                            movementCells[x, z + 1] = true;
+                            queue.Enqueue(new int[3] { x, z + 1, range - forestCost });
+                        }
                     }
                 }
             }

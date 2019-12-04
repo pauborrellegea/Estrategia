@@ -39,7 +39,7 @@ public class playerController : MonoBehaviour
             {
                 if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    GameObject newUnit = Instantiate(unidadBasica, transform.position, transform.rotation);
+                    GameObject newUnit = Instantiate(unidadBasica, transform.position, transform.rotation, transform);
                     gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 10;
                 }
@@ -53,7 +53,7 @@ public class playerController : MonoBehaviour
             {
                 if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    GameObject newUnit = Instantiate(unidadDistancia, transform.position, transform.rotation);
+                    GameObject newUnit = Instantiate(unidadDistancia, transform.position, transform.rotation, transform);
                     gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 15;
                 }
@@ -67,7 +67,7 @@ public class playerController : MonoBehaviour
             {
                 if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    GameObject newUnit = Instantiate(unidadExploradora, transform.position, transform.rotation);
+                    GameObject newUnit = Instantiate(unidadExploradora, transform.position, transform.rotation, transform);
                     gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 20;
                 }
@@ -81,7 +81,7 @@ public class playerController : MonoBehaviour
             {
                 if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    GameObject newUnit = Instantiate(unidadOfensiva, transform.position, transform.rotation);
+                    GameObject newUnit = Instantiate(unidadOfensiva, transform.position, transform.rotation, transform);
                     gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 35;
                 }
@@ -95,7 +95,7 @@ public class playerController : MonoBehaviour
             {
                 if (gridController.CanSpawnUnit(spawnX, spawnZ))
                 {
-                    GameObject newUnit = Instantiate(unidadDefensiva, transform.position, transform.rotation);
+                    GameObject newUnit = Instantiate(unidadDefensiva, transform.position, transform.rotation, transform);
                     gridController.AddUnit(newUnit, spawnX, spawnZ);
                     monedas -= 35;
                 }
