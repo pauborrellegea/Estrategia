@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class unidades_parametros : MonoBehaviour
+public class Unit : MonoBehaviour
 {
     public int ataque;
     public int vision;
@@ -11,17 +11,11 @@ public class unidades_parametros : MonoBehaviour
     public int vida;
     public int coste;
 
+    public bool player;
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetPlayer(bool p)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        player = p;
     }
 
 }

@@ -9,28 +9,33 @@ public class GridController : MonoBehaviour
 
     int forestCost = 2;
 
+    public Transform scene;
+
     //Grids globales
     private Casilla[,] gridCells;
-    private GameObject[,] gridUnits;
+    private Unit[,] gridUnits;
 
     private bool[,] movementCells; //Destacadas y solo permiten moverse en ese rango
 
     public int[,] playerVisibility; //numerado de 0 a N (N es la cantidad de unidades que pueden ver esa casilla)
 
+    public int[,] iaVisibility;
 
     void Awake()
     {
         //En awake se guardan las referencias de gameObjects de casillas en una matriz, con su posicion como indice
 
         gridCells = new Casilla[rows, cols];
-        gridUnits = new GameObject[rows, cols];
+        gridUnits = new Unit[rows, cols];
         movementCells = new bool[rows, cols];
         playerVisibility = new int[rows, cols];
         
 
-        for (int i = 0; i<transform.childCount; i++)
+        //----------------------------------------------------------------GENERAR
+
+        for (int i = 0; i<scene.childCount; i++)
         {
-            Transform child = transform.GetChild(i);
+            Transform child = scene.GetChild(i);
 
             //Local position para que solo dependa de la posicion interna
 
@@ -68,21 +73,21 @@ public class GridController : MonoBehaviour
         return movementCells[x, z];
     }
 
-    public void AddUnit(GameObject unit, int x, int z)
+    public void AddUnit(Unit unit, int x, int z)
     {
         //puede que sea mejor instanciar unidades en un objeto hijo del escenario, y guardar todas las casillas en otro hijo
         gridUnits[x, z] = unit;
-        AddVisibility(x, z, unit.GetComponent<unidades_parametros>().vision, true);
+        AddVisibility(x, z, unit.vision, true);
 
         UpdateFog();
     }
 
-    public GameObject GetUnit(int x, int z)
+    public Unit GetUnit(int x, int z)
     {
         return gridUnits[x, z];
     }
 
-    public void MoveUnit(GameObject unit, int toX, int toZ)
+    public void MoveUnit(Unit unit, int toX, int toZ)
     {
         //Esto deberia tener en cuenta mas cosas, y moverse suavemente
         
@@ -96,11 +101,11 @@ public class GridController : MonoBehaviour
             gridUnits[x, z] = null;
 
             //eliminar visibilidad
-            AddVisibility(x, z, unit.GetComponent<unidades_parametros>().vision, false);
+            AddVisibility(x, z, unit.vision, false);
             unit.transform.position = new Vector3(toX, 0, toZ);
             gridUnits[toX, toZ] = unit;
             //poner en la posicion nueva
-            AddVisibility(toX, toZ, unit.GetComponent<unidades_parametros>().vision, true);
+            AddVisibility(toX, toZ, unit.vision, true);
 
             UpdateFog();
         }
@@ -179,14 +184,14 @@ public class GridController : MonoBehaviour
         }
     }
 
-    public void SetMovement(GameObject unit)
+    public void SetMovement(Unit unit)
     {
         movementCells = new bool[rows, cols]; //reset
         if (unit != null)
         {
             int x = (int)unit.transform.position.x;
             int z = (int)unit.transform.position.z;
-            int range = unit.GetComponent<unidades_parametros>().rangoDeMovimiento;
+            int range = unit.rangoDeMovimiento;
 
             Queue<int[]> queue = new Queue<int[]>();
 
@@ -203,7 +208,7 @@ public class GridController : MonoBehaviour
                 
                 if (x > 0)
                 {
-                    if (!movementCells[x - 1, z] && range > 0)
+                    if (!movementCells[x - 1, z] && range > 0 && gridUnits[x - 1, z]==null)
                     {
                         if (gridCells[x - 1, z].isGrass())
                         {
@@ -219,7 +224,7 @@ public class GridController : MonoBehaviour
                 }
                 if (x < rows - 1)
                 {
-                    if (!movementCells[x + 1, z] && range > 0)
+                    if (!movementCells[x + 1, z] && range > 0 && gridUnits[x + 1, z] == null)
                     {
                         if (gridCells[x + 1, z].isGrass())
                         {
@@ -235,7 +240,7 @@ public class GridController : MonoBehaviour
                 }
                 if (z > 0)
                 {
-                    if (!movementCells[x, z - 1] && range > 0)
+                    if (!movementCells[x, z - 1] && range > 0 && gridUnits[x, z - 1] == null)
                     {
                         if (gridCells[x, z - 1].isGrass())
                         {
@@ -251,7 +256,7 @@ public class GridController : MonoBehaviour
                 }
                 if (z < cols - 1)
                 {
-                    if (!movementCells[x, z + 1] && range > 0)
+                    if (!movementCells[x, z + 1] && range > 0 && gridUnits[x, z + 1] == null)
                     {
                         if (gridCells[x, z + 1].isGrass())
                         {

@@ -2,106 +2,171 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerController : MonoBehaviour
+public class PlayerController : Player
 {
-    private GridController gridController;
+    //MOUSE
+    LayerMask layerMask;
+    public GameObject circuloSeleccion;
+    public GameObject circuloHighlight;
 
-    public static int monedas;
+    private Unit selectedUnit;
+    private int selectedX, selectedZ;
 
-    public GameObject unidadBasica;
-    public GameObject unidadDistancia;
-    public GameObject unidadExploradora;
-    public GameObject unidadOfensiva;
-    public GameObject unidadDefensiva;
-
-    private int spawnX, spawnZ;
-
-
-    // Use this for initialization
-    void Awake()
+    private void Start()
     {
-        GameObject escenario = GameObject.Find("Escenario");
+        layerMask = LayerMask.GetMask("Default");
+        player = true;
 
-        gridController = escenario.GetComponent<GridController>();
-
-        monedas = 30;
-
-        spawnX = (int)transform.position.x;
-        spawnZ = (int)transform.position.z;
+        circuloSeleccion.SetActive(false);
+        circuloHighlight.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Attack(Unit attacker, int x, int z)
     {
+        if (gameController.turnOfPlayer() != player) return;
+
+
+    }
+
+    public override void CreateUnit(UnitType type)
+    {
+        if (gameController.turnOfPlayer() != player) return;
+
+        int cost = gameController.spawnableUnits[(int)type].coste;
+        if (coins >= cost)
+        {
+            if (gridController.CanSpawnUnit(spawnX, spawnZ))
+            {
+                Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], transform.position, transform.rotation, transform) as Unit;
+                newUnit.player = player;
+
+                gridController.AddUnit(newUnit, spawnX, spawnZ);
+                SubstractCoins(cost);
+            }
+        }
+    }
+
+    public override void MoveUnit(Unit unit, int newX, int newZ)
+    {
+        if (gameController.turnOfPlayer() != player) return;
+
+        if (gridController.CanMove(selectedX, selectedZ))
+        {
+            gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
+
+            selectedUnit = null;
+            circuloSeleccion.SetActive(false);
+
+            gridController.SetMovement(null);
+        }
+    }
+
+    private void Update()
+    {
+        //-----------------------------Inputs temporales
+
+        //Creacion de unidades
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (monedas >= 10)
-            {
-                if (gridController.CanSpawnUnit(spawnX, spawnZ))
-                {
-                    GameObject newUnit = Instantiate(unidadBasica, transform.position, transform.rotation, transform);
-                    gridController.AddUnit(newUnit, spawnX, spawnZ);
-                    monedas -= 10;
-                }
-            }
-
+            CreateUnit(UnitType.BASICA);
         }
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            if (monedas >= 15)
-            {
-                if (gridController.CanSpawnUnit(spawnX, spawnZ))
-                {
-                    GameObject newUnit = Instantiate(unidadDistancia, transform.position, transform.rotation, transform);
-                    gridController.AddUnit(newUnit, spawnX, spawnZ);
-                    monedas -= 15;
-                }
-            }
-
+            CreateUnit(UnitType.LARGA);
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (monedas >= 20)
-            {
-                if (gridController.CanSpawnUnit(spawnX, spawnZ))
-                {
-                    GameObject newUnit = Instantiate(unidadExploradora, transform.position, transform.rotation, transform);
-                    gridController.AddUnit(newUnit, spawnX, spawnZ);
-                    monedas -= 20;
-                }
-            }
-
+            CreateUnit(UnitType.EXPLORADOR);
         }
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            if (monedas >= 35)
-            {
-                if (gridController.CanSpawnUnit(spawnX, spawnZ))
-                {
-                    GameObject newUnit = Instantiate(unidadOfensiva, transform.position, transform.rotation, transform);
-                    gridController.AddUnit(newUnit, spawnX, spawnZ);
-                    monedas -= 35;
-                }
-            }
-
+            CreateUnit(UnitType.CANNON);
         }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            if (monedas >= 35)
+            CreateUnit(UnitType.TANQUE);
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            circuloHighlight.SetActive(false);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit hitInfo;
+
+            if (Physics.Raycast(ray, out hitInfo))
             {
-                if (gridController.CanSpawnUnit(spawnX, spawnZ))
+                Transform hitTransform = hitInfo.transform;
+
+                //coordenadas de unidad o de casilla
+                selectedX = (int)hitTransform.position.x;
+                selectedZ = (int)hitTransform.position.z;
+
+                Unit selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
+
+                //SELECCIONAR
+                if (selection != null && selection.player==player)
                 {
-                    GameObject newUnit = Instantiate(unidadDefensiva, transform.position, transform.rotation, transform);
-                    gridController.AddUnit(newUnit, spawnX, spawnZ);
-                    monedas -= 35;
+                    if (selectedUnit != selection)
+                    {
+                        selectedUnit = selection;
+                        circuloSeleccion.SetActive(true);
+                        circuloSeleccion.transform.position = selectedUnit.transform.position;
+
+                        gridController.SetMovement(selectedUnit);
+                    }
+                    else
+                    {
+                        selectedUnit = null;
+                        circuloSeleccion.SetActive(false);
+
+                        gridController.SetMovement(selectedUnit);
+                    }
+                }
+
+                //MOVER
+                else
+                {
+                    if (selectedUnit != null)
+                    {
+                        MoveUnit(selectedUnit, selectedX, selectedZ);
+                    }
                 }
             }
 
         }
+        else
+        {
+            //POINTING
 
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit hitInfo;
+
+            if (Physics.Raycast(ray, out hitInfo))
+            {
+                Transform hitTransform = hitInfo.transform;
+
+                //coordenadas de unidad o de casilla
+                selectedX = (int)hitTransform.position.x;
+                selectedZ = (int)hitTransform.position.z;
+
+                circuloHighlight.transform.position = new Vector3(selectedX, 0, selectedZ);
+
+                //highlight
+                if (circuloSeleccion.transform.position != circuloHighlight.transform.position)
+                    circuloHighlight.SetActive(true);
+                else
+                    circuloHighlight.SetActive(false);
+            }
+            else
+            {
+                circuloHighlight.SetActive(false);
+            }
+        }
     }
 }

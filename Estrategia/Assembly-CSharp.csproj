@@ -62,18 +62,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\nieblaController.cs" />
     <Compile Include="Assets\Objects\Scripts\Movimiento.cs" />
     <Compile Include="Assets\Objects\Scripts\MovimientoCamara.cs" />
     <Compile Include="Assets\RTS_Camera\Demo\DemoScene.cs" />
     <Compile Include="Assets\RTS_Camera\Demo\TargetSelector.cs" />
     <Compile Include="Assets\RTS_Camera\Scripts\RTS_Camera.cs" />
     <Compile Include="Assets\scripts\Casilla.cs" />
-    <Compile Include="Assets\scripts\celdasAdyacentes.cs" />
+    <Compile Include="Assets\scripts\GameController.cs" />
     <Compile Include="Assets\scripts\GridController.cs" />
-    <Compile Include="Assets\scripts\mouseManager.cs" />
-    <Compile Include="Assets\scripts\playerController.cs" />
-    <Compile Include="Assets\scripts\unidades_parametros.cs" />
+    <Compile Include="Assets\scripts\IAController.cs" />
+    <Compile Include="Assets\scripts\no usados\celdasAdyacentes.cs" />
+    <Compile Include="Assets\scripts\no usados\mouseManager.cs" />
+    <Compile Include="Assets\scripts\no usados\nieblaController.cs" />
+    <Compile Include="Assets\scripts\no usados\OLDplayerController.cs" />
+    <Compile Include="Assets\scripts\Player.cs" />
+    <Compile Include="Assets\scripts\PlayerController.cs" />
+    <Compile Include="Assets\scripts\Unit.cs" />
+    <Compile Include="Assets\scripts\UnitType.cs" />
     <Compile Include="Assets\unidades\basica\scripts\rotator.cs" />
     <None Include="Assets\RTS_Camera\Demo\Projectors\Guidelines.txt" />
     <None Include="Assets\unidades\espada\shaders\pbrDoublesided.shader" />

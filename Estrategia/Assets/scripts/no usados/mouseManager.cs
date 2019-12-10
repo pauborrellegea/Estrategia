@@ -11,7 +11,7 @@ public class mouseManager : MonoBehaviour
     public GameObject circuloSeleccion;
     public GameObject circuloHighlight;
 
-    private static GameObject selectedUnit;
+    private static Unit selectedUnit;
     //[HideInInspector] public bool prueba;
 
     private int selectedX, selectedZ;
@@ -50,7 +50,7 @@ public class mouseManager : MonoBehaviour
 
 
 
-                GameObject selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
+                Unit selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
 
                 if (selection != null && selectedUnit != selection) //seleccionar
                 {
