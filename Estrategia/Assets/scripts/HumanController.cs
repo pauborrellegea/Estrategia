@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : Player
+public class HumanController : Player
 {
     //MOUSE
     LayerMask layerMask;

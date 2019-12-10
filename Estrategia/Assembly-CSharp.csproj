@@ -70,13 +70,13 @@
     <Compile Include="Assets\scripts\Casilla.cs" />
     <Compile Include="Assets\scripts\GameController.cs" />
     <Compile Include="Assets\scripts\GridController.cs" />
+    <Compile Include="Assets\scripts\HumanController.cs" />
     <Compile Include="Assets\scripts\IAController.cs" />
     <Compile Include="Assets\scripts\no usados\celdasAdyacentes.cs" />
     <Compile Include="Assets\scripts\no usados\mouseManager.cs" />
     <Compile Include="Assets\scripts\no usados\nieblaController.cs" />
     <Compile Include="Assets\scripts\no usados\OLDplayerController.cs" />
     <Compile Include="Assets\scripts\Player.cs" />
-    <Compile Include="Assets\scripts\PlayerController.cs" />
     <Compile Include="Assets\scripts\Unit.cs" />
     <Compile Include="Assets\scripts\UnitType.cs" />
     <Compile Include="Assets\unidades\basica\scripts\rotator.cs" />
