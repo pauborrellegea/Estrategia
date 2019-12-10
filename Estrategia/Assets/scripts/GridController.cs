@@ -4,8 +4,18 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
-    int rows = 17;
-    int cols = 12;
+    public Casilla grassCell, forestCell, mountainCell;
+
+    //perlin noise
+    public float scale = 10f;
+    public float offsetX, offsetY = 0f;
+    public float fadeDist = 8f;
+    public float cutGrass = 0.5f;
+    public float cutForest = 0.35f;
+
+
+    public int rows = 30; //mejor que sean iguales
+    public int cols = 30;
 
     int forestCost = 2;
 
@@ -29,10 +39,13 @@ public class GridController : MonoBehaviour
         gridUnits = new Unit[rows, cols];
         movementCells = new bool[rows, cols];
         playerVisibility = new int[rows, cols];
-        
+
 
         //----------------------------------------------------------------GENERAR
 
+        GenerateMap();
+
+        /*
         for (int i = 0; i<scene.childCount; i++)
         {
             Transform child = scene.GetChild(i);
@@ -45,17 +58,8 @@ public class GridController : MonoBehaviour
             int y = (int)child.localPosition.z;
 
             gridCells[x, y] = child.GetComponent<Casilla>(); ;
-            
-            /*
-            if (gridObjects[x, y] == null)
-            {
-                Debug.Log("done " + x + " " + y);
-                gridObjects[x, y] = child.gameObject;
-            } else
-            {
-                Debug.Log("repeated " + x + " " + y);
-            }*/
-        }
+        }*/
+
     }
 
     //con otras funciones se pueden crear mapas de influencia o 
@@ -75,9 +79,8 @@ public class GridController : MonoBehaviour
 
     public void AddUnit(Unit unit, int x, int z)
     {
-        //puede que sea mejor instanciar unidades en un objeto hijo del escenario, y guardar todas las casillas en otro hijo
         gridUnits[x, z] = unit;
-        AddVisibility(x, z, unit.vision, true);
+        AddVisibility(x, z, unit.vision, true, unit.player);
 
         UpdateFog();
     }
@@ -101,17 +104,17 @@ public class GridController : MonoBehaviour
             gridUnits[x, z] = null;
 
             //eliminar visibilidad
-            AddVisibility(x, z, unit.vision, false);
+            AddVisibility(x, z, unit.vision, false, unit.player);
             unit.transform.position = new Vector3(toX, 0, toZ);
             gridUnits[toX, toZ] = unit;
             //poner en la posicion nueva
-            AddVisibility(toX, toZ, unit.vision, true);
+            AddVisibility(toX, toZ, unit.vision, true, unit.player);
 
             UpdateFog();
         }
     }
 
-    private void AddVisibility(int x, int z, int range, bool sum) //PROBLEMA: se ve visibilidad cuadriculada (puede ser la intencion pero no se) 
+    private void AddVisibility(int x, int z, int range, bool sum, bool player) //PROBLEMA: se ve visibilidad cuadriculada (puede ser la intencion pero no se) 
     {
         int v = sum ? 1 : -1;
         bool[,] visitedCells = new bool[rows, cols];
@@ -128,7 +131,10 @@ public class GridController : MonoBehaviour
             z = cell[1];
             range = cell[2];
 
-            playerVisibility[x, z] += v; //suma o resta
+            if (player)
+                playerVisibility[x, z] += v; //suma o resta
+            else
+                iaVisibility[x, z] += v;
 
             if (x > 0)
             {
@@ -208,7 +214,7 @@ public class GridController : MonoBehaviour
                 
                 if (x > 0)
                 {
-                    if (!movementCells[x - 1, z] && range > 0 && gridUnits[x - 1, z]==null)
+                    if (!movementCells[x - 1, z] && range > 0 && gridUnits[x - 1, z]==null && playerVisibility[x - 1, z]>0)
                     {
                         if (gridCells[x - 1, z].isGrass())
                         {
@@ -224,7 +230,7 @@ public class GridController : MonoBehaviour
                 }
                 if (x < rows - 1)
                 {
-                    if (!movementCells[x + 1, z] && range > 0 && gridUnits[x + 1, z] == null)
+                    if (!movementCells[x + 1, z] && range > 0 && gridUnits[x + 1, z] == null && playerVisibility[x + 1, z] > 0)
                     {
                         if (gridCells[x + 1, z].isGrass())
                         {
@@ -240,7 +246,7 @@ public class GridController : MonoBehaviour
                 }
                 if (z > 0)
                 {
-                    if (!movementCells[x, z - 1] && range > 0 && gridUnits[x, z - 1] == null)
+                    if (!movementCells[x, z - 1] && range > 0 && gridUnits[x, z - 1] == null && playerVisibility[x, z - 1] > 0)
                     {
                         if (gridCells[x, z - 1].isGrass())
                         {
@@ -256,7 +262,7 @@ public class GridController : MonoBehaviour
                 }
                 if (z < cols - 1)
                 {
-                    if (!movementCells[x, z + 1] && range > 0 && gridUnits[x, z + 1] == null)
+                    if (!movementCells[x, z + 1] && range > 0 && gridUnits[x, z + 1] == null && playerVisibility[x, z + 1] > 0)
                     {
                         if (gridCells[x, z + 1].isGrass())
                         {
@@ -279,15 +285,142 @@ public class GridController : MonoBehaviour
             {
                 if (movementCells[r, c])
                 {
-                    //Lo ve
                     gridCells[r, c].EnableIndicator(true);
                 }
                 else
                 {
-                    //No lo ve ninguna unidad
                     gridCells[r, c].EnableIndicator(false);
                 }
             }
         }
     }
+
+    public void GenerateMap()
+    {
+        offsetX = Random.Range(0f, 99999f);
+        offsetY = Random.Range(0f, 99999f);
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                float sample = CalculateCell(x, z);
+
+                Casilla newCell;
+
+                if (sample > cutGrass)
+                {
+                    newCell = Instantiate(grassCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                }
+                else if (sample > cutForest)
+                {
+                    newCell = Instantiate(forestCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                }
+                else
+                {
+                    newCell = Instantiate(mountainCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                }
+
+                gridCells[x, z] = newCell;
+            }
+        }
+    }
+
+    float CalculateCell(int x, int y)
+    {
+        float dist = Mathf.Min(x, y, rows - x - 1, cols - y - 1);
+
+        float fade = 1f;
+
+        if (dist < rows / fadeDist)
+        {
+            fade = (1+fadeDist) * dist / rows;
+        }
+
+        float xCoord = (float)x / rows * scale + offsetX;
+        float yCoord = (float)y / cols * scale + offsetY;
+
+        float sample = 1f - Mathf.PerlinNoise(xCoord, yCoord) * fade;
+
+        return sample;
+
+    }
+
 }
+/*
+public class PerlinNoise : MonoBehaviour
+{
+    public int width = 30;
+    public int height = 30;
+    public float scale = 12f;
+
+    public float value = 0f;
+
+    public float offsetX, offsetY = 0f;
+
+    public float cutGrass = 0.5f;
+
+    public float cutForest = 0.35f;
+
+    private void Start()
+    {
+        offsetX = Random.Range(0f, 99999f);
+        offsetY = Random.Range(0f, 99999f);
+    }
+    private void Update()
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material.mainTexture = GenerateTexture();
+    }
+
+    Texture2D GenerateTexture()
+    {
+        Texture2D texture = new Texture2D(width, height);
+        texture.filterMode = FilterMode.Point;
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Color color = CalculateColor(x, y);
+                texture.SetPixel(x, y, color);
+            }
+        }
+
+        texture.Apply();
+
+        return texture;
+    }
+
+    Color CalculateColor(int x, int y)
+    {
+        float dist = Mathf.Min(x, y, width - x - 1, height - y - 1);
+
+        float fade = 1f;
+
+        if (dist < width / 8)
+        {
+            fade = 9 * dist / width;
+        }
+
+        float xCoord = (float)x / width * scale + offsetX;
+        float yCoord = (float)y / height * scale + offsetY;
+
+        float sample = 1f - Mathf.PerlinNoise(xCoord, yCoord) * fade;
+
+        if (sample > cutGrass)
+        {
+            return new Color(0f, 1f, 1f);
+        }
+        else if (sample > cutForest)
+        {
+            return new Color(1f, 1f, 0f);
+        }
+        else
+        {
+            return new Color(0.4f, 0.2f, 0f);
+        }
+
+    }
+}
+*/

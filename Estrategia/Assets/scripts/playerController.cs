@@ -26,6 +26,7 @@ public class PlayerController : Player
         if (gameController.turnOfPlayer() != player) return;
 
 
+        //substract coins
     }
 
     public override void CreateUnit(UnitType type)
@@ -37,7 +38,7 @@ public class PlayerController : Player
         {
             if (gridController.CanSpawnUnit(spawnX, spawnZ))
             {
-                Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], transform.position, transform.rotation, transform) as Unit;
+                Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
                 newUnit.player = player;
 
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
@@ -58,6 +59,8 @@ public class PlayerController : Player
             circuloSeleccion.SetActive(false);
 
             gridController.SetMovement(null);
+
+            //substract coins
         }
     }
 
@@ -91,82 +94,97 @@ public class PlayerController : Player
             CreateUnit(UnitType.TANQUE);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            circuloHighlight.SetActive(false);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            RaycastHit hitInfo;
-
-            if (Physics.Raycast(ray, out hitInfo))
+            EndTurn();
+        }
+        if (gameController.turnOfPlayer() == player)
+        {
+            if (Input.GetMouseButtonDown(0))
             {
-                Transform hitTransform = hitInfo.transform;
+                circuloHighlight.SetActive(false);
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                //coordenadas de unidad o de casilla
-                selectedX = (int)hitTransform.position.x;
-                selectedZ = (int)hitTransform.position.z;
+                RaycastHit hitInfo;
 
-                Unit selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
-
-                //SELECCIONAR
-                if (selection != null && selection.player==player)
+                if (Physics.Raycast(ray, out hitInfo))
                 {
-                    if (selectedUnit != selection)
-                    {
-                        selectedUnit = selection;
-                        circuloSeleccion.SetActive(true);
-                        circuloSeleccion.transform.position = selectedUnit.transform.position;
+                    Transform hitTransform = hitInfo.transform;
 
-                        gridController.SetMovement(selectedUnit);
+                    //coordenadas de unidad o de casilla
+                    selectedX = (int)hitTransform.position.x;
+                    selectedZ = (int)hitTransform.position.z;
+
+                    Unit selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
+
+                    //SELECCIONAR
+                    if (selection != null && selection.player == player)
+                    {
+                        if (selectedUnit != selection)
+                        {
+                            selectedUnit = selection;
+                            circuloSeleccion.SetActive(true);
+                            circuloSeleccion.transform.position = selectedUnit.transform.position;
+
+                            gridController.SetMovement(selectedUnit);
+                        }
+                        else
+                        {
+                            selectedUnit = null;
+                            circuloSeleccion.SetActive(false);
+
+                            gridController.SetMovement(selectedUnit);
+                        }
                     }
+
+                    //MOVER
                     else
                     {
-                        selectedUnit = null;
-                        circuloSeleccion.SetActive(false);
-
-                        gridController.SetMovement(selectedUnit);
+                        if (selectedUnit != null)
+                        {
+                            MoveUnit(selectedUnit, selectedX, selectedZ);
+                        }
                     }
                 }
 
-                //MOVER
-                else
-                {
-                    if (selectedUnit != null)
-                    {
-                        MoveUnit(selectedUnit, selectedX, selectedZ);
-                    }
-                }
-            }
-
-        }
-        else
-        {
-            //POINTING
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            RaycastHit hitInfo;
-
-            if (Physics.Raycast(ray, out hitInfo))
-            {
-                Transform hitTransform = hitInfo.transform;
-
-                //coordenadas de unidad o de casilla
-                selectedX = (int)hitTransform.position.x;
-                selectedZ = (int)hitTransform.position.z;
-
-                circuloHighlight.transform.position = new Vector3(selectedX, 0, selectedZ);
-
-                //highlight
-                if (circuloSeleccion.transform.position != circuloHighlight.transform.position)
-                    circuloHighlight.SetActive(true);
-                else
-                    circuloHighlight.SetActive(false);
             }
             else
             {
-                circuloHighlight.SetActive(false);
+                //POINTING
+
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                RaycastHit hitInfo;
+
+                if (Physics.Raycast(ray, out hitInfo))
+                {
+                    Transform hitTransform = hitInfo.transform;
+
+                    //coordenadas de unidad o de casilla
+                    selectedX = (int)hitTransform.position.x;
+                    selectedZ = (int)hitTransform.position.z;
+
+                    circuloHighlight.transform.position = new Vector3(selectedX, 0, selectedZ);
+
+                    //highlight
+                    if (circuloSeleccion.transform.position != circuloHighlight.transform.position)
+                        circuloHighlight.SetActive(true);
+                    else
+                        circuloHighlight.SetActive(false);
+                }
+                else
+                {
+                    circuloHighlight.SetActive(false);
+                }
             }
         }
+        else
+        {
+            circuloHighlight.SetActive(false);
+            circuloSeleccion.SetActive(false);
+            selectedUnit = null;
+            gridController.SetMovement(null);
+        }
+        
     }
 }

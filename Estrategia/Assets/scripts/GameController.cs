@@ -9,13 +9,19 @@ public class GameController : MonoBehaviour
 
     public Unit[] spawnableUnits;
 
+    private float timePerTurn = 20f;
+    private float ticks;
 
-    private bool playerTurn; //de quien es el turno
+    public int coinsPerTurn = 20;
+
+
+    private bool playerTurn; //de quien es el turno (true=player, false=ia)
 
     GridController gridController;
 
     private void Awake()
     {
+        ticks = 0f;
         gridController = GetComponent<GridController>();
         playerTurn = true; //aleatorio?
     }
@@ -24,6 +30,8 @@ public class GameController : MonoBehaviour
     {
         player.AddCoins(30);
         ia.AddCoins(30);
+        player.setSpawn(gridController.rows - 1, 0);
+        ia.setSpawn(0, gridController.cols - 1);
     }
 
     public bool turnOfPlayer()
@@ -31,5 +39,28 @@ public class GameController : MonoBehaviour
         return playerTurn;
     }
 
-    //turnos
+    private void FixedUpdate()
+    {
+        ticks += Time.fixedDeltaTime;
+
+        if (ticks >= timePerTurn)
+        {
+            playerTurn = !playerTurn;
+            ticks -= timePerTurn;
+        }
+    }
+    
+    public void EndTurn()
+    {
+        playerTurn = !playerTurn;
+        ticks = 0f;
+        if (playerTurn)
+        {
+            player.AddCoins(coinsPerTurn);
+        }
+        else
+        {
+            ia.AddCoins(coinsPerTurn);
+        }
+    }
 }

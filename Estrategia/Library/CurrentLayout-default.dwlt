@@ -114,7 +114,7 @@ MonoBehaviour:
   m_MinSize: {x: 679, y: 494}
   m_MaxSize: {x: 14002, y: 14044}
   vertical: 0
-  controlID: 128
+  controlID: 129
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -385,21 +385,21 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 52fbffffa2420000
+      m_ExpandedIDs: c83feaff2ee6faffa0b2ffff6efbffff00430000ac470000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: casillas_movimiento
+        m_OriginalName: casillas_movimiento
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: 20100
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 8}
       m_SearchString: 
@@ -445,9 +445,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 11.018183, y: 0.7227421, z: 0.7511754}
+    m_Target: {x: 15.538366, y: -7.66627, z: 12.608718}
     speed: 2
-    m_Value: {x: 11.018183, y: 0.7227421, z: 0.7511754}
+    m_Value: {x: 15.538366, y: -7.66627, z: 12.608718}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -476,13 +476,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.31875455, y: 0.52749866, z: -0.22259597, w: -0.7553831}
+    m_Target: {x: -0.579781, y: -0.29487348, z: 0.23690201, w: -0.72166103}
     speed: 2
-    m_Value: {x: -0.31875265, y: 0.5274955, z: -0.22259465, w: -0.75537854}
+    m_Value: {x: -0.57474077, y: -0.3013581, z: 0.23988834, w: -0.72201794}
   m_Size:
-    m_Target: 18.158112
+    m_Target: 31.555796
     speed: 2
-    m_Value: 18.158112
+    m_Value: 30.196934
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -636,20 +636,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/scripts
+    - Assets/prefabs/Casillas
   m_ViewMode: 1
   m_StartGridSize: 56
   m_LastFolders:
-  - Assets/scripts
+  - Assets/prefabs/Casillas
   m_LastFoldersGridSize: 56
   m_LastProjectPath: D:\Documents\Github\Zoologic\Estrategia\Estrategia
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: f6310000
-    m_LastClickedID: 12790
-    m_ExpandedIDs: 00000000c62c0000a83f0000f6520000f852000000ca9a3b
+    m_SelectedIDs: 62300000
+    m_LastClickedID: 12386
+    m_ExpandedIDs: 00000000022d0000e63f0000c85d0000ca5d000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -677,7 +677,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000c62c0000f6520000f8520000
+    m_ExpandedIDs: 00000000022d0000c85d0000ca5d0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -19,9 +19,12 @@ public abstract class Player : MonoBehaviour
         GameObject juego = GameObject.Find("Juego");
         gameController = juego.GetComponent<GameController>();
         gridController = juego.GetComponent<GridController>();
+    }
 
-        spawnX = (int)transform.position.x;
-        spawnZ = (int)transform.position.z;
+    public void setSpawn(int x, int z)
+    {
+        spawnX = x;
+        spawnZ = z;
     }
 
     abstract public void MoveUnit(Unit unit, int newX, int newZ);
@@ -29,6 +32,13 @@ public abstract class Player : MonoBehaviour
     abstract public void Attack(Unit attacker, int x, int z);
 
     abstract public void CreateUnit(UnitType type);
+
+    public void EndTurn()
+    {
+        if (gameController.turnOfPlayer() != player) return;
+
+        gameController.EndTurn();
+    }
 
     public void AddCoins(int amount)
     {
