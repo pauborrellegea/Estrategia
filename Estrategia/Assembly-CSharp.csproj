@@ -62,6 +62,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GOAP assets\CielaSpike\Thread Ninja\Example\ExampleScript.cs" />
+    <Compile Include="Assets\GOAP assets\CielaSpike\Thread Ninja\Ninja.cs" />
+    <Compile Include="Assets\GOAP assets\CielaSpike\Thread Ninja\Task.cs" />
+    <Compile Include="Assets\GOAP assets\CielaSpike\Thread Ninja\TaskState.cs" />
+    <Compile Include="Assets\GOAP assets\CielaSpike\Thread Ninja\ThreadNinjaMonoBehaviourExtensions.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Core\DataSet.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Core\GoapAction.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Core\GoapAgent.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Core\GoapGoal.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Actions\GrabItemAction.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Actions\KillAction.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Actions\KnockoutPlayerAction.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Actions\ThrowAtPlayerAction.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\AIActionController.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Goals\KillPlayerGoal.cs" />
+    <Compile Include="Assets\GOAP assets\GOAP\Examples\Throwable.cs" />
     <Compile Include="Assets\Objects\Scripts\Movimiento.cs" />
     <Compile Include="Assets\Objects\Scripts\MovimientoCamara.cs" />
     <Compile Include="Assets\RTS_Camera\Demo\DemoScene.cs" />
