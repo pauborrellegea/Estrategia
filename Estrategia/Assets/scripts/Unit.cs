@@ -18,4 +18,12 @@ public class Unit : MonoBehaviour
         player = p;
     }
 
+    public void ReceiveDamage(int amount)
+    {
+        vida -= amount;
+        if (vida < 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 }

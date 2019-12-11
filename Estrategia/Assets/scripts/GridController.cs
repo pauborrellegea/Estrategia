@@ -7,6 +7,8 @@ public class GridController : MonoBehaviour
     public Casilla grassCell, forestCell, mountainCell, towerCell;
     public Material playerBase, iaBase;
 
+    GameController gameController;
+
     //perlin noise
     public float scale = 10f;
     public float offsetX, offsetY = 0f;
@@ -27,6 +29,7 @@ public class GridController : MonoBehaviour
     private Unit[,] gridUnits;
 
     private bool[,] movementCells; //Destacadas y solo permiten moverse en ese rango
+    private bool[,] attackCells;
 
     public int[,] playerVisibility; //numerado de 0 a N (N es la cantidad de unidades que pueden ver esa casilla)
 
@@ -34,33 +37,15 @@ public class GridController : MonoBehaviour
 
     void Awake()
     {
-        //En awake se guardan las referencias de gameObjects de casillas en una matriz, con su posicion como indice
+        gameController = GetComponent<GameController>();
 
         gridCells = new Casilla[rows, cols];
         gridUnits = new Unit[rows, cols];
         movementCells = new bool[rows, cols];
+        attackCells = new bool[rows, cols];
         playerVisibility = new int[rows, cols];
 
-
-        //----------------------------------------------------------------GENERAR
-
         GenerateMap();
-
-        /*
-        for (int i = 0; i<scene.childCount; i++)
-        {
-            Transform child = scene.GetChild(i);
-
-            //Local position para que solo dependa de la posicion interna
-
-            //NO SE DEBE MOVER LAS CASILLAS DE DENTRO DEL OBJETO ESCENARIO (deben ir de x,z = 0,0 a 16,11)
-
-            int x = (int)child.localPosition.x;
-            int y = (int)child.localPosition.z;
-
-            gridCells[x, y] = child.GetComponent<Casilla>(); ;
-        }*/
-
     }
 
     //con otras funciones se pueden crear mapas de influencia o 
@@ -76,6 +61,11 @@ public class GridController : MonoBehaviour
     public bool CanMove(int x, int z)
     {
         return movementCells[x, z];
+    }
+
+    public bool CanAttack(int x, int z)
+    {
+        return attackCells[x, z];
     }
 
     public void AddUnit(Unit unit, int x, int z)
@@ -287,6 +277,7 @@ public class GridController : MonoBehaviour
                 if (movementCells[r, c])
                 {
                     gridCells[r, c].EnableIndicator(true);
+                    gridCells[r, c].setColor(false);
                 }
                 else
                 {
@@ -294,6 +285,100 @@ public class GridController : MonoBehaviour
                 }
             }
         }
+
+        //gridCells[0, 0].setColor(false);
+    }
+
+    public void SetAttack(Unit unit)
+    {
+        attackCells = new bool[rows, cols]; //reset
+        if (unit != null)
+        {
+            int x = (int)unit.transform.position.x;
+            int z = (int)unit.transform.position.z;
+            int range = unit.rangoDeAtaque;
+
+            Queue<int[]> queue = new Queue<int[]>();
+
+            attackCells[x, z] = true;
+            queue.Enqueue(new int[3] { x, z, range });
+
+            while (queue.Count > 0)
+            {
+                int[] cell = queue.Dequeue();
+                x = cell[0];
+                z = cell[1];
+                range = cell[2];
+
+
+                if (x > 0)
+                {
+                    if (!attackCells[x - 1, z] && range > 0)
+                    {
+                        if (gridUnits[x - 1, z]==null || !gridUnits[x - 1, z].player)
+                        {
+                            attackCells[x - 1, z] = true;
+                        }
+                        queue.Enqueue(new int[3] { x - 1, z, range - 1 });
+                    }
+                }
+                if (x < rows - 1)
+                {
+                    if (!attackCells[x + 1, z] && range > 0)
+                    {
+                        if (gridUnits[x + 1, z] == null || !gridUnits[x + 1, z].player)
+                        {
+                            attackCells[x + 1, z] = true;
+                        }
+                        queue.Enqueue(new int[3] { x + 1, z, range - 1 });
+                    }
+                }
+                if (z > 0)
+                {
+                    if (!attackCells[x, z - 1] && range > 0)
+                    {
+                        if (gridUnits[x, z - 1] == null || !gridUnits[x, z - 1].player)
+                        {
+                            attackCells[x, z - 1] = true;
+                        }
+                        queue.Enqueue(new int[3] { x, z - 1, range - 1 });
+                    }
+                }
+                if (z < cols - 1)
+                {
+                    if (!attackCells[x, z + 1] && range > 0)
+                    {
+                        if (gridUnits[x, z + 1] == null || !gridUnits[x, z + 1].player)
+                        {
+                            attackCells[x, z + 1] = true;
+                        }
+                        queue.Enqueue(new int[3] { x, z + 1, range - 1 });
+                    }
+                }
+            }
+            x = (int)unit.transform.position.x;
+            z = (int)unit.transform.position.z;
+            attackCells[x, z] = false;
+            
+            attackCells[rows - 1, 0] = false;
+        }
+        
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                if (attackCells[r, c])
+                {
+                    gridCells[r, c].EnableIndicator(true);
+                    gridCells[r, c].setColor(true);
+                }
+                else
+                {
+                    gridCells[r, c].EnableIndicator(false);
+                }
+            }
+        }
+        
     }
 
     public void GenerateMap()
@@ -372,80 +457,3 @@ public class GridController : MonoBehaviour
     }
 
 }
-/*
-public class PerlinNoise : MonoBehaviour
-{
-    public int width = 30;
-    public int height = 30;
-    public float scale = 12f;
-
-    public float value = 0f;
-
-    public float offsetX, offsetY = 0f;
-
-    public float cutGrass = 0.5f;
-
-    public float cutForest = 0.35f;
-
-    private void Start()
-    {
-        offsetX = Random.Range(0f, 99999f);
-        offsetY = Random.Range(0f, 99999f);
-    }
-    private void Update()
-    {
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material.mainTexture = GenerateTexture();
-    }
-
-    Texture2D GenerateTexture()
-    {
-        Texture2D texture = new Texture2D(width, height);
-        texture.filterMode = FilterMode.Point;
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                Color color = CalculateColor(x, y);
-                texture.SetPixel(x, y, color);
-            }
-        }
-
-        texture.Apply();
-
-        return texture;
-    }
-
-    Color CalculateColor(int x, int y)
-    {
-        float dist = Mathf.Min(x, y, width - x - 1, height - y - 1);
-
-        float fade = 1f;
-
-        if (dist < width / 8)
-        {
-            fade = 9 * dist / width;
-        }
-
-        float xCoord = (float)x / width * scale + offsetX;
-        float yCoord = (float)y / height * scale + offsetY;
-
-        float sample = 1f - Mathf.PerlinNoise(xCoord, yCoord) * fade;
-
-        if (sample > cutGrass)
-        {
-            return new Color(0f, 1f, 1f);
-        }
-        else if (sample > cutForest)
-        {
-            return new Color(1f, 1f, 0f);
-        }
-        else
-        {
-            return new Color(0.4f, 0.2f, 0f);
-        }
-
-    }
-}
-*/

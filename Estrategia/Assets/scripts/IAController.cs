@@ -29,4 +29,9 @@ public class IAController : Player
 
 
     }
+
+    public override void resetEndTurn()
+    {
+        
+    }
 }

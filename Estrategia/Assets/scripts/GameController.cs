@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour
 
     public Unit[] spawnableUnits;
 
-    private float timePerTurn = 20f;
+    private float timePerTurn = 2f;
     private float ticks;
 
     public int coinsPerTurn = 20;
@@ -45,8 +45,7 @@ public class GameController : MonoBehaviour
 
         if (ticks >= timePerTurn)
         {
-            playerTurn = !playerTurn;
-            ticks -= timePerTurn;
+            EndTurn();
         }
     }
     
@@ -57,10 +56,12 @@ public class GameController : MonoBehaviour
         if (playerTurn)
         {
             player.AddCoins(coinsPerTurn);
+            ia.resetEndTurn();
         }
         else
         {
             ia.AddCoins(coinsPerTurn);
+            player.resetEndTurn();
         }
     }
 }

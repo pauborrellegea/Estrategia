@@ -38,4 +38,15 @@ public class Casilla : MonoBehaviour
     {
         return type == CellType.FOREST;
     }
+
+    public void setColor(bool attack)
+    {
+        if (attack)
+        {
+            movement.GetComponent<Renderer>().material.color = new Color(1f, 0.5f, 0f);
+        } else
+        {
+            movement.GetComponent<Renderer>().material.color = new Color(1f, 0f, 0f);
+        }
+    }
 }

@@ -12,6 +12,8 @@ public class HumanController : Player
     private Unit selectedUnit;
     private int selectedX, selectedZ;
 
+    private bool attacking = false;
+
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default");
@@ -25,8 +27,25 @@ public class HumanController : Player
     {
         if (gameController.turnOfPlayer() != player) return;
 
+        if (gridController.CanAttack(selectedX, selectedZ))
+        {
+            //deal damage
+            Unit attackedUnit = gridController.GetUnit(x, z);
+            if (attackedUnit != null)
+            {
+                attackedUnit.ReceiveDamage(attacker.ataque);
+            }
 
-        //substract coins
+            attacking = false;
+
+            selectedUnit = null;
+            circuloSeleccion.SetActive(false);
+
+            gridController.SetMovement(null);
+            gridController.SetAttack(null);
+
+            //substract coins
+        }
     }
 
     public override void CreateUnit(UnitType type)
@@ -59,9 +78,18 @@ public class HumanController : Player
             circuloSeleccion.SetActive(false);
 
             gridController.SetMovement(null);
+            gridController.SetAttack(null);
 
             //substract coins
         }
+    }
+
+    public override void resetEndTurn()
+    {
+        selectedUnit = null;
+        gridController.SetMovement(null);
+        gridController.SetAttack(null);
+        attacking = false;
     }
 
     private void Update()
@@ -94,10 +122,31 @@ public class HumanController : Player
             CreateUnit(UnitType.TANQUE);
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T)) //terminar turno
         {
             EndTurn();
         }
+
+        if (Input.GetKeyDown(KeyCode.Z)) //preparar ataque
+        {
+            if (!attacking)
+            {
+                if (selectedUnit != null)
+                {
+                    attacking = true;
+                    gridController.SetMovement(null);
+                    gridController.SetAttack(selectedUnit);
+                }
+            }
+            else
+            {
+                attacking = false;
+                gridController.SetAttack(null);
+                gridController.SetMovement(selectedUnit);
+            }
+        }
+
+
         if (gameController.turnOfPlayer() == player)
         {
             if (Input.GetMouseButtonDown(0))
@@ -117,34 +166,44 @@ public class HumanController : Player
 
                     Unit selection = gridController.GetUnit(selectedX, selectedZ); //puede devolver null
 
-                    //SELECCIONAR
-                    if (selection != null && selection.player == player)
+                    if (!attacking)
                     {
-                        if (selectedUnit != selection)
+                        //SELECCIONAR
+                        if (selection != null && selection.player == player)
                         {
-                            selectedUnit = selection;
-                            circuloSeleccion.SetActive(true);
-                            circuloSeleccion.transform.position = selectedUnit.transform.position;
+                            if (selectedUnit != selection)
+                            {
+                                selectedUnit = selection;
+                                circuloSeleccion.SetActive(true);
+                                circuloSeleccion.transform.position = selectedUnit.transform.position;
 
-                            gridController.SetMovement(selectedUnit);
+                                gridController.SetMovement(selectedUnit);
+                            }
+                            else
+                            {
+                                selectedUnit = null;
+                                circuloSeleccion.SetActive(false);
+
+                                gridController.SetMovement(selectedUnit);
+                            }
                         }
+
+                        //MOVER
                         else
                         {
-                            selectedUnit = null;
-                            circuloSeleccion.SetActive(false);
-
-                            gridController.SetMovement(selectedUnit);
+                            if (selectedUnit != null)
+                            {
+                                MoveUnit(selectedUnit, selectedX, selectedZ);
+                            }
                         }
                     }
-
-                    //MOVER
                     else
                     {
-                        if (selectedUnit != null)
-                        {
-                            MoveUnit(selectedUnit, selectedX, selectedZ);
-                        }
+                        //debe haber unidad seleccionada
+                        Attack(selectedUnit, selectedX, selectedZ);
+                        
                     }
+                    
                 }
 
             }
@@ -164,10 +223,27 @@ public class HumanController : Player
                     selectedX = (int)hitTransform.position.x;
                     selectedZ = (int)hitTransform.position.z;
 
+                    bool point = false;
+
+                    if (attacking)
+                    {
+                        if (gridController.CanAttack(selectedX, selectedZ))
+                        {
+                            point = true;
+                        }
+                    }
+                    else
+                    {
+                        if (gridController.CanMove(selectedX, selectedZ))
+                        {
+                            point = true;
+                        }
+                    }
+
                     circuloHighlight.transform.position = new Vector3(selectedX, 0, selectedZ);
 
                     //highlight
-                    if (circuloSeleccion.transform.position != circuloHighlight.transform.position)
+                    if (circuloSeleccion.transform.position != circuloHighlight.transform.position && point)
                         circuloHighlight.SetActive(true);
                     else
                         circuloHighlight.SetActive(false);

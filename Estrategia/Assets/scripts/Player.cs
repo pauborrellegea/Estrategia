@@ -35,6 +35,8 @@ public abstract class Player : MonoBehaviour
 
     abstract public void CreateUnit(UnitType type);
 
+    abstract public void resetEndTurn();
+
     public void EndTurn()
     {
         if (gameController.turnOfPlayer() != player) return;
