@@ -30,8 +30,8 @@ public class GameController : MonoBehaviour
     {
         player.AddCoins(30);
         ia.AddCoins(30);
-        player.setSpawn(gridController.rows - 1, 0);
-        ia.setSpawn(0, gridController.cols - 1);
+        player.setSpawn(gridController.rows - 2, 1);
+        ia.setSpawn(1, gridController.cols - 2);
     }
 
     public bool turnOfPlayer()

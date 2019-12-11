@@ -154,7 +154,7 @@ Transform:
   - {fileID: 866890645}
   - {fileID: 278185925}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &223678421
 MonoBehaviour:
@@ -195,6 +195,10 @@ MonoBehaviour:
     type: 3}
   mountainCell: {fileID: 2671269246477750630, guid: 9a5f6d1f393779e419eae4dced3c56f6,
     type: 3}
+  towerCell: {fileID: 2833163848393317746, guid: 5f8eafb36fb31cb40ad7d8e16e66024d,
+    type: 3}
+  playerBase: {fileID: 2100000, guid: b829e876974b7b840bdfd04d4148f726, type: 2}
+  iaBase: {fileID: 2100000, guid: 14c0a21a17f266f4b8b700f6ccead0ac, type: 2}
   scale: 10
   offsetX: 0
   offsetY: 0
@@ -326,7 +330,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4e-45}
+  m_BoundingSphereOverride: {x: 0.0703125, y: 0.0234375, z: -0.03515625, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -731,7 +735,7 @@ PrefabInstance:
     - target: {fileID: 7117670439237713392, guid: 614962fbfa7aab04f9b34580b4cf473d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7117670439237713392, guid: 614962fbfa7aab04f9b34580b4cf473d,
         type: 3}

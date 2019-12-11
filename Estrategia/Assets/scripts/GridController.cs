@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
-    public Casilla grassCell, forestCell, mountainCell;
+    public Casilla grassCell, forestCell, mountainCell, towerCell;
+    public Material playerBase, iaBase;
 
     //perlin noise
     public float scale = 10f;
@@ -304,24 +305,40 @@ public class GridController : MonoBehaviour
         {
             for (int z = 0; z < cols; z++)
             {
-                float sample = CalculateCell(x, z);
+                
 
                 Casilla newCell;
-
-                if (sample > cutGrass)
+                if (x==0 && z == cols - 1)
                 {
-                    newCell = Instantiate(grassCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
-                }
-                else if (sample > cutForest)
+                    //ia
+                    newCell = Instantiate(towerCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    setBaseColor(newCell, false);
+                    gridCells[x, z] = newCell;
+                    continue;
+                } else if (x == rows - 1 && z == 0)
                 {
-                    newCell = Instantiate(forestCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
-                }
-                else
+                    //player base
+                    newCell = Instantiate(towerCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    setBaseColor(newCell, true);
+                    gridCells[x, z] = newCell;
+                    continue;
+                } else
                 {
-                    newCell = Instantiate(mountainCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    float sample = CalculateCell(x, z);
+                    if (sample > cutGrass)
+                    {
+                        newCell = Instantiate(grassCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    }
+                    else if (sample > cutForest)
+                    {
+                        newCell = Instantiate(forestCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    }
+                    else
+                    {
+                        newCell = Instantiate(mountainCell, new Vector3(x, 0f, z), transform.rotation, scene) as Casilla;
+                    }
+                    gridCells[x, z] = newCell;
                 }
-
-                gridCells[x, z] = newCell;
             }
         }
     }
@@ -344,6 +361,14 @@ public class GridController : MonoBehaviour
 
         return sample;
 
+    }
+
+    void setBaseColor(Casilla tower, bool player)
+    {
+        Material color = player ? playerBase : iaBase;
+
+        tower.transform.GetChild(2).GetChild(0).GetComponent<Renderer>().material = color;
+        tower.transform.GetChild(2).GetChild(1).GetComponent<Renderer>().material = color;
     }
 
 }

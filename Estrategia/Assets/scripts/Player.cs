@@ -7,6 +7,8 @@ public abstract class Player : MonoBehaviour
     [HideInInspector]public bool player;
     /*[HideInInspector]*/public int coins = 0;
 
+    public int baseHP = 100;
+
     //EL JUGADOR DEBE ESTAR EN LA POSICION DE SU SPAWN POINT
     [HideInInspector]public int spawnX, spawnZ;
 
@@ -48,5 +50,15 @@ public abstract class Player : MonoBehaviour
     public void SubstractCoins(int amount)
     {
         coins -= amount;
+    }
+
+    public void baseAttacked(int amount)
+    {
+        baseHP -= amount;
+
+        if (baseHP < 0)
+        {
+            //lose
+        }
     }
 }

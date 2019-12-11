@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Casilla : MonoBehaviour
 {
-    public enum CellType { GRASS, FOREST, MOUNTAIN, RIVER}
+    public enum CellType { GRASS, FOREST, MOUNTAIN, TOWER}
 
     public CellType type;
     GameObject fog;
