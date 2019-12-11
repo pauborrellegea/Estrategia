@@ -183,11 +183,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ataque: 0
-  vision: 6
+  vision: 8
   rangoDeAtaque: 0
   rangoDeMovimiento: 6
   vida: 10
-  coste: 35
+  coste: 30
+  player: 0
 --- !u!54 &6881072800178051462
 Rigidbody:
   m_ObjectHideFlags: 0

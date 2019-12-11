@@ -8,6 +8,7 @@ public abstract class Player : MonoBehaviour
     /*[HideInInspector]*/public int coins = 0;
 
     public int baseHP = 100;
+    [HideInInspector] public int otherBaseX, otherBaseZ = -1;
 
     //EL JUGADOR DEBE ESTAR EN LA POSICION DE SU SPAWN POINT
     [HideInInspector]public int spawnX, spawnZ;
@@ -36,6 +37,12 @@ public abstract class Player : MonoBehaviour
     abstract public void CreateUnit(UnitType type);
 
     abstract public void resetEndTurn();
+
+    public void setOtherBase(int x, int z)
+    {
+        otherBaseX = x;
+        otherBaseZ = z;
+    }
 
     public void EndTurn()
     {

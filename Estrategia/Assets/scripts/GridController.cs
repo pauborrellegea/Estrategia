@@ -62,6 +62,11 @@ public class GridController : MonoBehaviour
     {
         return movementCells[x, z];
     }
+    /*
+    public bool PlayerCanSee(int x, int z)
+    {
+        return playerVisibility[x, z]>0;
+    }*/
 
     public bool CanAttack(int x, int z)
     {

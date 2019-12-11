@@ -29,11 +29,17 @@ public class HumanController : Player
 
         if (gridController.CanAttack(selectedX, selectedZ))
         {
-            //deal damage
-            Unit attackedUnit = gridController.GetUnit(x, z);
-            if (attackedUnit != null)
+            if (selectedX == otherBaseX && selectedZ == otherBaseZ)
             {
-                attackedUnit.ReceiveDamage(attacker.ataque);
+                gameController.AttackBase(attacker.ataque, player);
+            }
+            else
+            {
+                Unit attackedUnit = gridController.GetUnit(x, z);
+                if (attackedUnit != null)
+                {
+                    attackedUnit.ReceiveDamage(attacker.ataque);
+                }
             }
 
             attacking = false;
@@ -224,8 +230,12 @@ public class HumanController : Player
                     selectedZ = (int)hitTransform.position.z;
 
                     bool point = false;
-
-                    if (attacking)
+                    
+                    if (gridController.GetUnit(selectedX, selectedZ)!=null)
+                    {
+                        point = true;
+                    }
+                    else if (attacking)
                     {
                         if (gridController.CanAttack(selectedX, selectedZ))
                         {

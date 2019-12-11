@@ -12,7 +12,10 @@ public class GameController : MonoBehaviour
     private float timePerTurn = 2f;
     private float ticks;
 
-    public int coinsPerTurn = 20;
+    private int turnsElapsed;
+
+    private int startCoins = 30;
+    public int coinsPerTurn; //cada turno la recompensa aumenta
 
 
     private bool playerTurn; //de quien es el turno (true=player, false=ia)
@@ -24,12 +27,20 @@ public class GameController : MonoBehaviour
         ticks = 0f;
         gridController = GetComponent<GridController>();
         playerTurn = true; //aleatorio?
+
+        coinsPerTurn = 20;
+
+        turnsElapsed = 0;
     }
 
     private void Start()
     {
-        player.AddCoins(30);
-        ia.AddCoins(30);
+        player.AddCoins(startCoins);
+        ia.AddCoins(startCoins);
+
+        player.setOtherBase(0, gridController.cols - 1);
+        ia.setOtherBase(gridController.rows - 1, 0);
+
         player.setSpawn(gridController.rows - 2, 1);
         ia.setSpawn(1, gridController.cols - 2);
     }
@@ -51,6 +62,13 @@ public class GameController : MonoBehaviour
     
     public void EndTurn()
     {
+        turnsElapsed += 1;
+        if (turnsElapsed >= 2)
+        {
+            coinsPerTurn += 2;
+            turnsElapsed -= 2;
+        }
+
         playerTurn = !playerTurn;
         ticks = 0f;
         if (playerTurn)
@@ -62,6 +80,18 @@ public class GameController : MonoBehaviour
         {
             ia.AddCoins(coinsPerTurn);
             player.resetEndTurn();
+        }
+    }
+
+    public void AttackBase(int amount, bool p)
+    {
+        if (p)
+        {
+            ia.baseAttacked(amount);
+        }
+        else
+        {
+            player.baseAttacked(amount);
         }
     }
 }

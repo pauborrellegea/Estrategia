@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3062636568855641242}
   - component: {fileID: 47958652864239897}
   m_Layer: 0
-  m_Name: escudo
+  m_Name: tanque
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88,12 +88,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322466589a6ab9543884da9771d2657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ataque: 1
+  ataque: 2
   vision: 3
   rangoDeAtaque: 2
   rangoDeMovimiento: 2
-  vida: 2
-  coste: 15
+  vida: 20
+  coste: 25
+  player: 0
 --- !u!54 &3062636568855641242
 Rigidbody:
   m_ObjectHideFlags: 0

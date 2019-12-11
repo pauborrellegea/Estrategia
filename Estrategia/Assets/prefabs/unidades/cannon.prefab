@@ -1358,7 +1358,7 @@ GameObject:
   - component: {fileID: 6347150338906399163}
   - component: {fileID: 4139788599188776748}
   m_Layer: 0
-  m_Name: espada
+  m_Name: cannon
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1435,12 +1435,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322466589a6ab9543884da9771d2657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ataque: 5
+  ataque: 10
   vision: 2
-  rangoDeAtaque: 4
-  rangoDeMovimiento: 2
+  rangoDeAtaque: 3
+  rangoDeMovimiento: 5
   vida: 5
   coste: 25
+  player: 0
 --- !u!54 &6347150338906399163
 Rigidbody:
   m_ObjectHideFlags: 0

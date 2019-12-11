@@ -154,7 +154,7 @@ Transform:
   - {fileID: 866890645}
   - {fileID: 278185925}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &223678421
 MonoBehaviour:
@@ -239,6 +239,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 0
   coins: 0
+  baseHP: 100
+  otherBaseX: 0
+  otherBaseZ: -1
   spawnX: 0
   spawnZ: 0
   gameController: {fileID: 0}
@@ -403,7 +406,7 @@ PrefabInstance:
     - target: {fileID: 508659390268028945, guid: 76a1af61f5680ec42b577556d8bda9d8,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 508659390268028945, guid: 76a1af61f5680ec42b577556d8bda9d8,
         type: 3}
@@ -488,6 +491,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 0
   coins: 0
+  baseHP: 100
+  otherBaseX: 0
+  otherBaseZ: -1
   spawnX: 0
   spawnZ: 0
   gameController: {fileID: 0}
@@ -735,7 +741,7 @@ PrefabInstance:
     - target: {fileID: 7117670439237713392, guid: 614962fbfa7aab04f9b34580b4cf473d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7117670439237713392, guid: 614962fbfa7aab04f9b34580b4cf473d,
         type: 3}
