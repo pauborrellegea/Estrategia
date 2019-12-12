@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HumanController : Player
 {
@@ -14,6 +15,8 @@ public class HumanController : Player
 
     private bool attacking = false;
 
+    public Text attackButton, coinsText;
+
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default");
@@ -23,13 +26,25 @@ public class HumanController : Player
         circuloHighlight.SetActive(false);
     }
 
+    public override void AddCoins(int amount)
+    {
+        base.AddCoins(amount);
+        coinsText.text = "Coins: " + coins;
+    }
+
+    public override void SubstractCoins(int amount)
+    {
+        base.SubstractCoins(amount);
+        coinsText.text = "Coins: " + coins;
+    }
+
     public override void Attack(Unit attacker, int x, int z)
     {
         if (gameController.turnOfPlayer() != player) return;
 
-        if (gridController.CanAttack(selectedX, selectedZ))
+        if (gridController.CanAttack(x, z))
         {
-            if (selectedX == otherBaseX && selectedZ == otherBaseZ)
+            if (x == otherBaseX && z == otherBaseZ)
             {
                 gameController.AttackBase(attacker.ataque, player);
             }
@@ -43,6 +58,7 @@ public class HumanController : Player
             }
 
             attacking = false;
+            attackButton.text = "Attack";
 
             selectedUnit = null;
             circuloSeleccion.SetActive(false);
@@ -51,6 +67,19 @@ public class HumanController : Player
             gridController.SetAttack(null);
 
             //substract coins
+        }
+        else 
+        {
+            int attX = (int)attacker.transform.position.x;
+            int attZ = (int)attacker.transform.position.z;
+            if (attX == x && attZ == z)
+            {
+                selectedUnit = null;
+                circuloSeleccion.SetActive(false);
+                gridController.SetAttack(null);
+                attacking = false;
+                attackButton.text = "Attack";
+            }
         }
     }
 
@@ -69,6 +98,47 @@ public class HumanController : Player
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
                 SubstractCoins(cost);
             }
+        }
+    }
+
+    public void CreateUnitBasic()
+    {
+        CreateUnit(UnitType.BASICA);
+    }
+    public void CreateUnitCannon()
+    {
+        CreateUnit(UnitType.CANNON);
+    }
+    public void CreateUnitExplorer()
+    {
+        CreateUnit(UnitType.EXPLORADOR);
+    }
+    public void CreateUnitLong()
+    {
+        CreateUnit(UnitType.LARGA);
+    }
+    public void CreateUnitTank()
+    {
+        CreateUnit(UnitType.TANQUE);
+    }
+    public void PrepareAttack()
+    {
+        if (!attacking)
+        {
+            if (selectedUnit != null)
+            {
+                attackButton.text = "Move";
+                attacking = true;
+                gridController.SetMovement(null);
+                gridController.SetAttack(selectedUnit);
+            }
+        }
+        else
+        {
+            attackButton.text = "Attack";
+            attacking = false;
+            gridController.SetAttack(null);
+            gridController.SetMovement(selectedUnit);
         }
     }
 
@@ -96,12 +166,13 @@ public class HumanController : Player
         gridController.SetMovement(null);
         gridController.SetAttack(null);
         attacking = false;
+        attackButton.text = "Attack";
     }
 
     private void Update()
     {
         //-----------------------------Inputs temporales
-
+        /*
         //Creacion de unidades
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -135,22 +206,8 @@ public class HumanController : Player
 
         if (Input.GetKeyDown(KeyCode.Z)) //preparar ataque
         {
-            if (!attacking)
-            {
-                if (selectedUnit != null)
-                {
-                    attacking = true;
-                    gridController.SetMovement(null);
-                    gridController.SetAttack(selectedUnit);
-                }
-            }
-            else
-            {
-                attacking = false;
-                gridController.SetAttack(null);
-                gridController.SetMovement(selectedUnit);
-            }
-        }
+            PrepareAttack();
+        }*/
 
 
         if (gameController.turnOfPlayer() == player)
@@ -207,7 +264,6 @@ public class HumanController : Player
                     {
                         //debe haber unidad seleccionada
                         Attack(selectedUnit, selectedX, selectedZ);
-                        
                     }
                     
                 }

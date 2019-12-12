@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -9,18 +10,20 @@ public class GameController : MonoBehaviour
 
     public Unit[] spawnableUnits;
 
-    private float timePerTurn = 2f;
+    private float timePerTurn = 20f;
     private float ticks;
 
     private int turnsElapsed;
 
-    private int startCoins = 30;
+    private int startCoins = 100;
     public int coinsPerTurn; //cada turno la recompensa aumenta
 
 
     private bool playerTurn; //de quien es el turno (true=player, false=ia)
 
     GridController gridController;
+
+    public Text timerText;
 
     private void Awake()
     {
@@ -50,6 +53,21 @@ public class GameController : MonoBehaviour
         return playerTurn;
     }
 
+    public void Update()
+    {
+        if (playerTurn)
+        {
+            timerText.color = Color.blue;
+            timerText.text = "Your turn: " + Mathf.Round(ticks * 100f) / 100f;
+
+        }
+        else
+        {
+            timerText.color = Color.red;
+            timerText.text = "Other turn: " + Mathf.Round(ticks * 100f) / 100f;
+        }
+    }
+
     private void FixedUpdate()
     {
         ticks += Time.fixedDeltaTime;
@@ -73,12 +91,12 @@ public class GameController : MonoBehaviour
         ticks = 0f;
         if (playerTurn)
         {
-            player.AddCoins(coinsPerTurn);
+            ia.AddCoins(coinsPerTurn);
             ia.resetEndTurn();
         }
         else
         {
-            ia.AddCoins(coinsPerTurn);
+            player.AddCoins(coinsPerTurn);
             player.resetEndTurn();
         }
     }

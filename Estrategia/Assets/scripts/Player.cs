@@ -51,12 +51,12 @@ public abstract class Player : MonoBehaviour
         gameController.EndTurn();
     }
 
-    public void AddCoins(int amount)
+    public virtual void AddCoins(int amount)
     {
         coins += amount;
     }
 
-    public void SubstractCoins(int amount)
+    public virtual void SubstractCoins(int amount)
     {
         coins -= amount;
     }
