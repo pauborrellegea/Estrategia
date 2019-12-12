@@ -13,9 +13,14 @@ public class Unit : MonoBehaviour
 
     public bool player;
 
+    public bool hasAttacked;
+    public int remainingMoves;
+
     public void SetPlayer(bool p)
     {
         player = p;
+        hasAttacked = false;
+        remainingMoves = rangoDeMovimiento;
     }
 
     public void ReceiveDamage(int amount)
@@ -25,5 +30,21 @@ public class Unit : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void substractMoves(int amount)
+    {
+        remainingMoves -= amount;
+    }
+
+    public void Attacked()
+    {
+        hasAttacked = true;
+    }
+
+    public void ResetTurn()
+    {
+        hasAttacked = false;
+        remainingMoves = rangoDeMovimiento;
     }
 }

@@ -84,6 +84,7 @@
     <Compile Include="Assets\RTS_Camera\Demo\TargetSelector.cs" />
     <Compile Include="Assets\RTS_Camera\Scripts\RTS_Camera.cs" />
     <Compile Include="Assets\scripts\Casilla.cs" />
+    <Compile Include="Assets\scripts\Direction.cs" />
     <Compile Include="Assets\scripts\GameController.cs" />
     <Compile Include="Assets\scripts\GridController.cs" />
     <Compile Include="Assets\scripts\HumanController.cs" />

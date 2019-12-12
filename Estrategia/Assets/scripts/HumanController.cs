@@ -25,6 +25,8 @@ public class HumanController : Player
 
     private float cameraSpeed = 10f;
 
+    private int attackCost = 3;
+
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default");
@@ -74,7 +76,8 @@ public class HumanController : Player
             gridController.SetMovement(null);
             gridController.SetAttack(null);
 
-            //substract coins
+            SubstractCoins(attackCost);
+            attacker.Attacked();
         }
         else 
         {
@@ -101,7 +104,7 @@ public class HumanController : Player
             if (gridController.CanSpawnUnit(spawnX, spawnZ))
             {
                 Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
-                newUnit.player = player;
+                newUnit.SetPlayer(player);
 
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
                 SubstractCoins(cost);
@@ -133,7 +136,7 @@ public class HumanController : Player
     {
         if (!attacking)
         {
-            if (selectedUnit != null)
+            if (selectedUnit != null && !selectedUnit.hasAttacked)
             {
                 attackButton.text = "Move";
                 attacking = true;
@@ -156,15 +159,20 @@ public class HumanController : Player
 
         if (gridController.CanMove(selectedX, selectedZ))
         {
-            gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
+            int moveCost = gridController.MoveCost(newX, newZ);
+            if (moveCost<=coins) //y le quedan movimientos
+            {
+                gridController.MoveUnit(selectedUnit, selectedX, selectedZ);
 
-            selectedUnit = null;
-            circuloSeleccion.SetActive(false);
+                selectedUnit = null;
+                circuloSeleccion.SetActive(false);
 
-            gridController.SetMovement(null);
-            gridController.SetAttack(null);
+                gridController.SetMovement(null);
+                gridController.SetAttack(null);
 
-            //substract coins
+                SubstractCoins(moveCost);
+                unit.substractMoves(moveCost);
+            }
         }
     }
 

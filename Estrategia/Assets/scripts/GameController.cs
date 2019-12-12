@@ -91,6 +91,8 @@ public class GameController : MonoBehaviour
             turnsElapsed -= 2;
         }
 
+        gridController.resetAllUnits();
+
         playerTurn = !playerTurn;
         ticks = 0f;
         if (playerTurn)
