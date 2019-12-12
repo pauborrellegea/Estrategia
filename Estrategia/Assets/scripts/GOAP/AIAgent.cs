@@ -11,7 +11,7 @@ public class AIAgent : GoapAgent
 
         //create goals
 
-
+        
         //create actions
     }
     

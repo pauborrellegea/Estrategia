@@ -45,11 +45,11 @@ public class GameController : MonoBehaviour
         player.AddCoins(startCoins);
         ia.AddCoins(startCoins);
 
-        player.setOtherBase(0, gridController.cols - 1);
-        ia.setOtherBase(gridController.rows - 1, 0);
+        player.setOtherBase(1, gridController.cols - 2);
+        ia.setOtherBase(gridController.rows - 2, 1);
 
-        player.setSpawn(gridController.rows - 2, 1);
-        ia.setSpawn(1, gridController.cols - 2);
+        player.setSpawn(gridController.rows - 1, 0);
+        ia.setSpawn(0, gridController.cols - 1);
     }
 
     public bool turnOfPlayer()

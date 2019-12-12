@@ -87,6 +87,7 @@
     <Compile Include="Assets\scripts\Direction.cs" />
     <Compile Include="Assets\scripts\GameController.cs" />
     <Compile Include="Assets\scripts\GOAP\AIAgent.cs" />
+    <Compile Include="Assets\scripts\GOAP\goals\MapSeenGoal.cs" />
     <Compile Include="Assets\scripts\GridController.cs" />
     <Compile Include="Assets\scripts\HumanController.cs" />
     <Compile Include="Assets\scripts\IAController.cs" />

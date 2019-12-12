@@ -1398,7 +1398,7 @@ MonoBehaviour:
   circuloHighlight: {fileID: 2145750681}
   attackButton: {fileID: 768655416}
   coinsText: {fileID: 1772242903}
-  camera: {fileID: 963194225}
+  sceneCamera: {fileID: 963194225}
 --- !u!4 &866890645
 Transform:
   m_ObjectHideFlags: 0

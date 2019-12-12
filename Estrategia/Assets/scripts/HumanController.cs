@@ -17,7 +17,7 @@ public class HumanController : Player
 
     public Text attackButton, coinsText;
 
-    public GameObject camera;
+    public GameObject sceneCamera;
     private float minX = 10f;
     private float minZ = -4.5f;
     private float maxX = 33.5f;
@@ -189,27 +189,27 @@ public class HumanController : Player
     {
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            float newX = Mathf.Clamp(camera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
-            float newZ = Mathf.Clamp(camera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
-            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+            float newX = Mathf.Clamp(sceneCamera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(sceneCamera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
+            sceneCamera.transform.position = new Vector3(newX, sceneCamera.transform.position.y, newZ);
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            float newX = Mathf.Clamp(camera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
-            float newZ = Mathf.Clamp(camera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
-            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+            float newX = Mathf.Clamp(sceneCamera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(sceneCamera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
+            sceneCamera.transform.position = new Vector3(newX, sceneCamera.transform.position.y, newZ);
         }
         if (Input.GetKey(KeyCode.UpArrow)) //arr der
         {
-            float newX = Mathf.Clamp(camera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
-            float newZ = Mathf.Clamp(camera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
-            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+            float newX = Mathf.Clamp(sceneCamera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(sceneCamera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
+            sceneCamera.transform.position = new Vector3(newX, sceneCamera.transform.position.y, newZ);
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            float newX = Mathf.Clamp(camera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
-            float newZ = Mathf.Clamp(camera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
-            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+            float newX = Mathf.Clamp(sceneCamera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(sceneCamera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
+            sceneCamera.transform.position = new Vector3(newX, sceneCamera.transform.position.y, newZ);
         }
 
         //-----------------------------Inputs temporales
