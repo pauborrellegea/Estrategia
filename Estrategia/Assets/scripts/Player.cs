@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Player : MonoBehaviour
 {
     [HideInInspector]public bool player;
-    /*[HideInInspector]*/public int coins = 0;
+    [HideInInspector]public int coins = 0;
 
     public int baseHP = 100;
     [HideInInspector] public int otherBaseX, otherBaseZ = -1;
@@ -67,7 +67,7 @@ public abstract class Player : MonoBehaviour
 
         if (baseHP < 0)
         {
-            //lose
+            gameController.LoseGame(player);
         }
     }
 }

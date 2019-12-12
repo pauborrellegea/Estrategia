@@ -17,6 +17,14 @@ public class HumanController : Player
 
     public Text attackButton, coinsText;
 
+    public GameObject camera;
+    private float minX = 10f;
+    private float minZ = -4.5f;
+    private float maxX = 33.5f;
+    private float maxZ = 20f;
+
+    private float cameraSpeed = 10f;
+
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default");
@@ -171,6 +179,31 @@ public class HumanController : Player
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            float newX = Mathf.Clamp(camera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(camera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
+            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+        }
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            float newX = Mathf.Clamp(camera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(camera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
+            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+        }
+        if (Input.GetKey(KeyCode.UpArrow)) //arr der
+        {
+            float newX = Mathf.Clamp(camera.transform.position.x - cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(camera.transform.position.z + cameraSpeed * Time.deltaTime, minZ, maxZ);
+            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            float newX = Mathf.Clamp(camera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);
+            float newZ = Mathf.Clamp(camera.transform.position.z - cameraSpeed * Time.deltaTime, minZ, maxZ);
+            camera.transform.position = new Vector3(newX, camera.transform.position.y, newZ);
+        }
+
         //-----------------------------Inputs temporales
         /*
         //Creacion de unidades

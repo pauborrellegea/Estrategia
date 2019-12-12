@@ -23,7 +23,9 @@ public class GameController : MonoBehaviour
 
     GridController gridController;
 
-    public Text timerText;
+    public Text timerText, endText;
+
+    public GameObject canvasGame, canvasLose;
 
     private void Awake()
     {
@@ -34,6 +36,8 @@ public class GameController : MonoBehaviour
         coinsPerTurn = 20;
 
         turnsElapsed = 0;
+        canvasLose.SetActive(false);
+        canvasGame.SetActive(true);
     }
 
     private void Start()
@@ -110,6 +114,25 @@ public class GameController : MonoBehaviour
         else
         {
             player.baseAttacked(amount);
+        }
+    }
+
+    public void LoseGame(bool loses)
+    {
+        player.enabled = false;
+        ia.enabled = false;
+        canvasLose.SetActive(true);
+        canvasGame.SetActive(false);
+
+        if (loses)
+        {
+            endText.text = "YOU LOSE";
+            endText.color = Color.red;
+        }
+        else
+        {
+            endText.text = "YOU WIN";
+            endText.color = Color.blue;
         }
     }
 }
