@@ -20,7 +20,18 @@ public class IAController : Player
     {
         if (gameController.turnOfPlayer() != player) return;
 
+        int cost = gameController.spawnableUnits[(int)type].coste;
+        if (coins >= cost)
+        {
+            if (gridController.CanSpawnUnit(spawnX, spawnZ))
+            {
+                Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
+                newUnit.SetPlayer(player);
 
+                gridController.AddUnit(newUnit, spawnX, spawnZ);
+                SubstractCoins(cost);
+            }
+        }
     }
 
     public override void MoveUnit(Unit unit, int newX, int newZ)

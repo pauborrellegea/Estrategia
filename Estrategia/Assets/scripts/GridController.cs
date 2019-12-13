@@ -44,6 +44,7 @@ public class GridController : MonoBehaviour
         movementCells = new SingleMove[rows, cols];
         attackCells = new bool[rows, cols];
         playerVisibility = new int[rows, cols];
+        iaVisibility = new int[rows, cols];
 
         GenerateMap();
     }

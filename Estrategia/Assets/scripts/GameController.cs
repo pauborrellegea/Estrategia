@@ -8,6 +8,8 @@ public class GameController : MonoBehaviour
     public Player player;
     public Player ia;
 
+    public AIAgent aiAgent;
+
     public Unit[] spawnableUnits;
 
     private float timePerTurn = 20f;
@@ -29,6 +31,8 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
+        aiAgent.enabled = false;
+
         ticks = 0f;
         gridController = GetComponent<GridController>();
         playerTurn = true; //aleatorio?
@@ -99,11 +103,13 @@ public class GameController : MonoBehaviour
         {
             ia.AddCoins(coinsPerTurn);
             ia.resetEndTurn();
+            aiAgent.enabled = false;
         }
         else
         {
             player.AddCoins(coinsPerTurn);
             player.resetEndTurn();
+            aiAgent.enabled = true;
         }
     }
 

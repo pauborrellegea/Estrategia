@@ -122,6 +122,8 @@ namespace SwordGC.AI.Goap
         {
             public const string KILL_PLAYER = "KillPlayer";
             public const string STAY_ALIVE = "StayAlive";
+
+            public const string CREATE_UNIT = "CreateUnit";
         }
     }
 }
