@@ -24,7 +24,7 @@ namespace SwordGC.AI.Actions
 
         public override void Perform()
         {
-            Debug.Log("KilledPlayer");
+            
         }
 
         public override GoapAction Clone()

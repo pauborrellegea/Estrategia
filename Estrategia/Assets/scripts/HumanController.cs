@@ -25,8 +25,6 @@ public class HumanController : Player
 
     private float cameraSpeed = 10f;
 
-    private int attackCost = 3;
-
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default");
@@ -34,6 +32,7 @@ public class HumanController : Player
 
         circuloSeleccion.SetActive(false);
         circuloHighlight.SetActive(false);
+        
     }
 
     public override void AddCoins(int amount)
@@ -52,7 +51,7 @@ public class HumanController : Player
     {
         if (gameController.turnOfPlayer() != player) return;
 
-        if (gridController.CanAttack(x, z))
+        if (gridController.CanAttack(x, z) && coins > attackCost)
         {
             if (x == otherBaseX && z == otherBaseZ)
             {
@@ -78,6 +77,9 @@ public class HumanController : Player
 
             SubstractCoins(attackCost);
             attacker.Attacked();
+
+            GameObject att = Instantiate(attackPrefab, transform);
+            att.GetComponent<AttackAnimation>().setObjectives(attacker.transform.position, new Vector3(x, 0, z));
         }
         else 
         {

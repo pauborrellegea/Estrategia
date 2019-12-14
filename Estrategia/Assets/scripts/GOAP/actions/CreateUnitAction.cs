@@ -18,8 +18,8 @@ namespace SwordGC.AI.Actions
             //goal 
             goal = GoapGoal.Goals.CREATE_UNIT;
 
-            targetString = "Empty";
-            requiredRange = 1000f;
+            targetString = "Empty"; //
+            requiredRange = 1000f; //
 
             cost = 10;
             
@@ -34,6 +34,13 @@ namespace SwordGC.AI.Actions
         public override GoapAction Clone()
         {
             return new CreateUnitAction(agent, ia).SetClone(originalObjectGUID);
+        }
+
+        protected override bool CheckProceduralPreconditions(DataSet data)
+        {
+            if (!ia.isTurn()) return false;
+
+            return ia.HasCoinsFor(UnitType.BASICA);
         }
     }
 }

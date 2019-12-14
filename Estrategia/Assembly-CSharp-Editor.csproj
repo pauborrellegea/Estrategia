@@ -68,8 +68,6 @@
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\GoalNode.cs" />
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\Node.cs" />
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\NodeViewWindow.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>

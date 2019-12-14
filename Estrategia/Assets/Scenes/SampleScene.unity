@@ -322,6 +322,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 0
   coins: 0
+  attackPrefab: {fileID: 2041890224468875576, guid: 9b901abdc2d8ca1478717591f039ab87,
+    type: 3}
   baseHP: 100
   otherBaseX: 0
   otherBaseZ: -1
@@ -1038,7 +1040,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 3.2169752e+27, z: 5.7e-43, w: 3.2169752e+27}
+  m_BoundingSphereOverride: {x: 4.5918e-41, y: 0, z: 2.3509887e-38, w: 2.910827e-11}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1402,6 +1404,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 0
   coins: 0
+  attackPrefab: {fileID: 2041890224468875576, guid: 9b901abdc2d8ca1478717591f039ab87,
+    type: 3}
   baseHP: 100
   otherBaseX: 0
   otherBaseZ: -1

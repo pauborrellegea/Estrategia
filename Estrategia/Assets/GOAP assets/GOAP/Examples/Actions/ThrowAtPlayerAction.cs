@@ -43,7 +43,7 @@ namespace SwordGC.AI.Actions
 
         public override void Perform()
         {
-            Debug.Log("throw");
+            
         }
 
         public override GoapAction Clone()

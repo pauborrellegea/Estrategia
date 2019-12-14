@@ -80,9 +80,7 @@
     <Compile Include="Assets\GOAP assets\GOAP\Examples\Throwable.cs" />
     <Compile Include="Assets\Objects\Scripts\Movimiento.cs" />
     <Compile Include="Assets\Objects\Scripts\MovimientoCamara.cs" />
-    <Compile Include="Assets\RTS_Camera\Demo\DemoScene.cs" />
-    <Compile Include="Assets\RTS_Camera\Demo\TargetSelector.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\RTS_Camera.cs" />
+    <Compile Include="Assets\scripts\AttackAnimation.cs" />
     <Compile Include="Assets\scripts\Casilla.cs" />
     <Compile Include="Assets\scripts\Direction.cs" />
     <Compile Include="Assets\scripts\GameController.cs" />
@@ -100,11 +98,8 @@
     <Compile Include="Assets\scripts\Unit.cs" />
     <Compile Include="Assets\scripts\UnitType.cs" />
     <Compile Include="Assets\unidades\basica\scripts\rotator.cs" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Guidelines.txt" />
     <None Include="Assets\unidades\espada\shaders\pbrDoublesided.shader" />
     <None Include="Assets\unidades\basica\shaders\doublesidedshader.shader" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

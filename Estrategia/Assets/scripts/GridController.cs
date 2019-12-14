@@ -32,7 +32,6 @@ public class GridController : MonoBehaviour
     private bool[,] attackCells;
 
     public int[,] playerVisibility; //numerado de 0 a N (N es la cantidad de unidades que pueden ver esa casilla)
-
     public int[,] iaVisibility;
 
     void Awake()
@@ -68,12 +67,6 @@ public class GridController : MonoBehaviour
     {
         return movementCells[x, z].cost;
     }
-
-    /*
-    public bool PlayerCanSee(int x, int z)
-    {
-        return playerVisibility[x, z]>0;
-    }*/
 
     public bool CanAttack(int x, int z)
     {

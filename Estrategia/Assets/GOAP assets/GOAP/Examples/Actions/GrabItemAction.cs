@@ -23,7 +23,7 @@ namespace SwordGC.AI.Actions
 
         public override void Perform()
         {
-            Debug.Log("grabItemAction");
+            
         }
 
         public override GoapAction Clone()

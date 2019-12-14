@@ -7,14 +7,18 @@ public abstract class Player : MonoBehaviour
     [HideInInspector]public bool player;
     [HideInInspector]public int coins = 0;
 
+    public GameObject attackPrefab;
+
     public int baseHP = 100;
     [HideInInspector] public int otherBaseX, otherBaseZ = -1;
 
     //EL JUGADOR DEBE ESTAR EN LA POSICION DE SU SPAWN POINT
     [HideInInspector]public int spawnX, spawnZ;
 
-    [HideInInspector]public GameController gameController;
-    [HideInInspector]public GridController gridController;
+    [HideInInspector]public static GameController gameController;
+    [HideInInspector]public static GridController gridController;
+
+    [HideInInspector] public static int attackCost = 3;
 
     private void Awake()
     {

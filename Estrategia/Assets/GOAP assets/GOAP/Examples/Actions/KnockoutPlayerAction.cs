@@ -32,7 +32,6 @@ namespace SwordGC.AI.Actions
         public override void Perform()
         {
             // Code to perform this action
-            Debug.Log("KnockedOut");
         }
 
         public override GoapAction Clone()
