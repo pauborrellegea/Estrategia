@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CielaSpike;
 
 public class GridController : MonoBehaviour
 {
@@ -54,6 +55,15 @@ public class GridController : MonoBehaviour
     public float[,] terrainMobility;
 
 
+
+    //parametros de importancia
+    public float baseImportance;
+    public float attackImportance;
+    public float otherAttackImportance;
+    public float explorationImportance;
+    public float mobilityImportance;
+
+
     void Awake()
     {
         displayRenderer = quadDisplay.GetComponent<Renderer>();
@@ -79,6 +89,13 @@ public class GridController : MonoBehaviour
         explorationInfluence = new float[rows, cols];
         terrainMobility = new float[rows, cols];
 
+        //parametros aleatorios
+        baseImportance = Random.Range(7f, 15f);
+        attackImportance = Random.Range(1f, 10f);
+        otherAttackImportance = Random.Range(1f, 10f);
+        explorationImportance = Random.Range(1f, 10f);
+        mobilityImportance = Random.Range(1f, 10f);
+
 
         GenerateMap();
     }
@@ -95,9 +112,10 @@ public class GridController : MonoBehaviour
 
     public void UpdateUnitInfluences()
     {
-        UpdateIASeenUnits();
+        this.StartCoroutineAsync(UpdateIASeenUnits());
         GenerateIAAttackInfluence();
-        GenerateOtherAttackInfluence();
+        this.StartCoroutineAsync(GenerateOtherAttackInfluence());
+        this.StartCoroutineAsync(GenerateExplorationInfluence());
     }
 
     public bool CanSpawnUnit(int x, int z)
@@ -634,6 +652,10 @@ public class GridController : MonoBehaviour
     //*************************************************************
     public void GenerateBaseInfluence()
     {
+        this.StartCoroutineAsync(NewBaseInfluence());
+    }
+    private IEnumerator NewBaseInfluence()
+    {
         int spX = gameController.ia.otherBaseX;
         int spZ = gameController.ia.otherBaseZ;
 
@@ -658,9 +680,11 @@ public class GridController : MonoBehaviour
                 baseInfluence[x, z] = (baseInfluence[x, z]-min)/(max-min);
             }
         }
+
+        yield return Ninja.JumpToUnity;
     }
 
-    private void UpdateIASeenUnits()
+    private IEnumerator UpdateIASeenUnits()
     {
         for (int x = 0; x < rows; x++)
         {
@@ -675,28 +699,45 @@ public class GridController : MonoBehaviour
                 }
             }
         }
+
+        yield return Ninja.JumpToUnity;
     }
 
     public void GenerateIAAttackInfluence()
     {
+        this.StartCoroutineAsync(ThreadAttackInfluence());
+    }
+
+    private IEnumerator ThreadAttackInfluence()
+    {
         attackInfluence = new float[rows, cols];
-        foreach (Unit unit in playerUnits)
+
+        for (int x = 0; x < rows; x++)
         {
-            if (unit.rangoDeAtaque>0 && !unit.hasAttacked)
-                AddAttackInfluence(ref attackInfluence, unit, (int)unit.transform.position.x, (int)unit.transform.position.z, unit.rangoDeAtaque + unit.remainingMoves);
+            for (int z = 0; z < cols; z++)
+            {
+                if (gridUnits[x, z]!=null && !gridUnits[x, z].player)
+                {
+                    Unit unit = gridUnits[x, z];
+                    AddAttackInfluence(ref attackInfluence, unit, x, z, unit.rangoDeAtaque + unit.remainingMoves);
+                }
+            }
         }
+
         float max = 10f; //maximo posible
 
         for (int x = 0; x < rows; x++)
         {
             for (int z = 0; z < cols; z++)
             {
-                attackInfluence[x, z] = 1f - attackInfluence[x, z]/ max;
+                attackInfluence[x, z] = 1f - attackInfluence[x, z] / max;
             }
         }
+
+        yield return Ninja.JumpToUnity;
     }
 
-    private void GenerateOtherAttackInfluence()
+    private IEnumerator GenerateOtherAttackInfluence()
     {
         for (int x = 0; x < rows; x++)
         {
@@ -718,6 +759,8 @@ public class GridController : MonoBehaviour
                 otherSeenAttackInfluence[x, z] = otherSeenAttackInfluence[x, z] / max;
             }
         }
+
+        yield return Ninja.JumpToUnity;
     }
 
 
@@ -748,6 +791,69 @@ public class GridController : MonoBehaviour
                     terrainMobility[x, z] = GaussianFilter5x5(x, z);
             }
         }
+    }
+
+    private IEnumerator GenerateExplorationInfluence()
+    {
+        explorationInfluence = new float[rows, cols];
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                explorationInfluence[x, z] = GaussianExploration(x, z);
+            }
+        }
+
+        float max = -Mathf.Infinity;
+        float min = Mathf.Infinity;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                float inf = explorationInfluence[x, z];
+                if (inf < min) min = inf;
+                if (inf > max) max = inf;
+            }
+        }
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                explorationInfluence[x, z] = (explorationInfluence[x, z] - min) / (max - min);
+            }
+        }
+
+        yield return Ninja.JumpToUnity;
+    }
+
+    public float GaussianExploration(int ox, int oz)
+    {
+        float[] values = new float[] { 6f, 4f, 1f };
+
+        float total = 0f;
+
+        for (int x = -2; x <= 2; x++)
+        {
+            for (int z = -2; z <= 2; z++)
+            {
+                float mult = values[Mathf.Abs(x)] * values[Mathf.Abs(z)];
+                if (ox + x >= 0 && ox + x < rows && oz + z >= 0 && oz + z < cols)
+                {
+                    if (iaVisibility[ox + x, oz + z] > 0)
+                    {
+                        total +=  mult;
+                    }
+                }
+                else
+                {
+                    total += mult;
+                }
+            }
+        }
+
+        return total / 246f;
     }
 
     public float GaussianFilter5x5(int ox, int oz)
