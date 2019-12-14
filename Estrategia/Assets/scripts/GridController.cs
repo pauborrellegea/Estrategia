@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
+    public MapDisplay mapMode;
+    public GameObject quadDisplay;
+    private Renderer displayRenderer;
+
     public Casilla grassCell, forestCell, mountainCell, towerCell;
     public Material playerBase, iaBase;
 
@@ -32,10 +36,24 @@ public class GridController : MonoBehaviour
     private bool[,] attackCells;
 
     public int[,] playerVisibility; //numerado de 0 a N (N es la cantidad de unidades que pueden ver esa casilla)
+
+
+    //RAW MAPS
+    public Casilla[,] terrainSeen;
     public int[,] iaVisibility;
+    //raw seeing enemy units
+
+    //mapas de influencia
+    public float[,] baseInfluence;
+    //seen units attack influence
+    //exploration influence (cuantas nuevas visibles o desconocidas suman)
+    //attack influence (* damage)
+    
 
     void Awake()
     {
+        displayRenderer = quadDisplay.GetComponent<Renderer>();
+
         gameController = GetComponent<GameController>();
 
         gridCells = new Casilla[rows, cols];
@@ -45,7 +63,22 @@ public class GridController : MonoBehaviour
         playerVisibility = new int[rows, cols];
         iaVisibility = new int[rows, cols];
 
+
+        baseInfluence = new float[rows, cols];
+        terrainSeen = new Casilla[rows, cols];
+
         GenerateMap();
+    }
+
+    public void GenerateInitMaps()
+    {
+        GenerateBaseInfluence();
+    }
+
+
+    private void Update()
+    {
+        displayRenderer.material.mainTexture = GetTextureFromMap(mapMode);
     }
 
     //con otras funciones se pueden crear mapas de influencia o 
@@ -130,7 +163,11 @@ public class GridController : MonoBehaviour
             if (player)
                 playerVisibility[x, z] += v; //suma o resta
             else
+            {
                 iaVisibility[x, z] += v;
+                if (terrainSeen[x, z] == null) terrainSeen[x, z] = gridCells[x, z];
+            }
+                
 
             if (x > 0)
             {
@@ -532,7 +569,193 @@ public class GridController : MonoBehaviour
         }
     }
 
+
+    // MAPAS DE INFLUENCIA
+    //*************************************************************
+    private void GenerateBaseInfluence()
+    {
+        int spX = gameController.ia.otherBaseX;
+        int spZ = gameController.ia.otherBaseZ;
+
+        float max = -Mathf.Infinity;
+        float min = Mathf.Infinity;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                float inf = Mathf.Abs(x - spX) + Mathf.Abs(z - spZ);
+                baseInfluence[x, z] = inf;
+                if (inf < min) min = inf;
+                if (inf > max) max = inf;
+            }
+        }
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                baseInfluence[x, z] = 1f - (baseInfluence[x, z]-min)/(max-min);
+            }
+        }
+    }
+
+
+
+    Texture2D GetTextureFromMap(MapDisplay map)
+    {
+        if (map == MapDisplay.RAWCELLS) { return GenerateTexture(gridCells); }
+        if (map == MapDisplay.RAWUNITS) { return GenerateTexture(gridUnits); }
+        if (map == MapDisplay.IA_VISIBILITY) { return GenerateTexture(iaVisibility); }
+        if (map == MapDisplay.PL_VISIBILITY) { return GenerateTexture(playerVisibility); }
+        if (map == MapDisplay.PL_ATTACK) { return GenerateTexture(attackCells); }
+        if (map == MapDisplay.BASE_INF) { return GenerateTexture(baseInfluence); }
+        if (map == MapDisplay.SEEN_MAP_RAW) { return GenerateTexture(terrainSeen); }
+
+
+        return new Texture2D(rows, cols);
+
+    }
+
+    Texture2D GenerateTexture(Casilla[,] matrix)
+    {
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                
+                Color color = Color.white;
+                if (matrix[x, y] == null) color = Color.magenta;
+                else if (matrix[x, y].type == Casilla.CellType.FOREST)
+                {
+                    color = Color.grey;
+                }
+                else if (matrix[x, y].type == Casilla.CellType.MOUNTAIN)
+                {
+                    color = Color.black;
+                }
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
+    Texture2D GenerateTexture(Unit[,] matrix)
+    {
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                Color color = Color.black;
+                if (matrix[x, y] != null)
+                {
+                    if (matrix[x, y].player)
+                    {
+                        color = Color.blue;
+                    } else
+                    {
+                        color = Color.red;
+                    }
+                }
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
+    Texture2D GenerateTexture(bool[,] matrix)
+    {
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                Color color = Color.black;
+                if (matrix[x, y])
+                {
+                    color = Color.white;
+                } else
+                {
+                    color = Color.black;
+                }
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
+
+    Texture2D GenerateTexture(int[,] matrix) //visibilidad
+    {
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                Color color = Color.black;
+                if (matrix[x, y]>0)
+                {
+                    color = Color.white;
+                }
+                else
+                {
+                    color = Color.black;
+                }
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
+    Texture2D GenerateTexture(float[,] matrix)
+    {
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        float max = -Mathf.Infinity;
+        float min = Mathf.Infinity;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                if (matrix[x, y] > max) max = matrix[x, y];
+                if (matrix[x, y] < min) min = matrix[x, y];
+            }
+        }
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                if (max==min) texture.SetPixel(x, y, Color.black);
+                else
+                {
+                    float sample = (matrix[x, y] - min) / (max-min);
+                    texture.SetPixel(x, y, new Color(sample, sample, sample));
+                }
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
 }
+
+public enum MapDisplay
+{
+    RAWCELLS, RAWUNITS, PL_ATTACK, PL_VISIBILITY, IA_VISIBILITY, BASE_INF, SEEN_MAP_RAW
+}
+
 
 public class SingleMove
 {

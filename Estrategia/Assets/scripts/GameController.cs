@@ -54,6 +54,8 @@ public class GameController : MonoBehaviour
 
         player.setSpawn(gridController.rows - 1, 0);
         ia.setSpawn(0, gridController.cols - 1);
+
+        gridController.GenerateInitMaps();
     }
 
     public bool turnOfPlayer()
