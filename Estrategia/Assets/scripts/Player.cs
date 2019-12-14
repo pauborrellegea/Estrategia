@@ -44,7 +44,6 @@ public abstract class Player : MonoBehaviour
 
     public void setOtherBase(int x, int z)
     {
-        Debug.Log(gameObject);
         otherBaseX = x;
         otherBaseZ = z;
     }

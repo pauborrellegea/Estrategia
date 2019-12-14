@@ -16,6 +16,8 @@ public class Unit : MonoBehaviour
     public bool hasAttacked;
     public int remainingMoves;
 
+    public bool dead = false;
+
     public void SetPlayer(bool p)
     {
         player = p;
@@ -28,7 +30,7 @@ public class Unit : MonoBehaviour
         vida -= amount;
         if (vida < 0)
         {
-            Destroy(gameObject);
+            dead = true;
         }
     }
 
@@ -46,5 +48,10 @@ public class Unit : MonoBehaviour
     {
         hasAttacked = false;
         remainingMoves = rangoDeMovimiento;
+    }
+
+    public bool IsDead()
+    {
+        return dead;
     }
 }

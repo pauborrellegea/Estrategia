@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29fb53067d37844458ec8ffcf33e2e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapMode: 6
+  mapMode: 4
   quadDisplay: {fileID: 1767767627}
   grassCell: {fileID: 2833163848393317746, guid: b5fa0b91dbacc3d49a643266b6ad746f,
     type: 3}
@@ -1040,7 +1040,8 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 1.558681e+28, y: 1.5526857e+26, z: 7.6589554e+28,
+    w: 1.0597115e-38}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

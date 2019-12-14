@@ -4,18 +4,6 @@ using UnityEngine;
 
 public class IAController : Player
 {
-    private List<Unit> iaUnits;
-
-    private void Awake()
-    {
-        iaUnits = new List<Unit>();
-    }
-
-    public void AddUnitToList(Unit unit)
-    {
-        iaUnits.Add(unit);
-    }
-
     private void Start()
     {
         player = false;
@@ -24,6 +12,9 @@ public class IAController : Player
     public override void Attack(Unit attacker, int x, int z)
     {
         if (gameController.turnOfPlayer() != player) return; //no deberian ser necesarias, en teoria
+
+
+        gridController.GenerateIAAttackInfluence(); //solo si ataca
     }
 
     public override void CreateUnit(UnitType type)
@@ -37,8 +28,6 @@ public class IAController : Player
             {
                 Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
                 newUnit.SetPlayer(player);
-
-                AddUnitToList(newUnit);
 
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
                 SubstractCoins(cost);

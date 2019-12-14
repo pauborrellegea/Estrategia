@@ -63,6 +63,10 @@ public class HumanController : Player
                 if (attackedUnit != null)
                 {
                     attackedUnit.ReceiveDamage(attacker.ataque);
+                    if (attackedUnit.IsDead())
+                    {
+                        gridController.RemoveUnit(attackedUnit, x, z);
+                    }
                 }
             }
 
@@ -329,8 +333,8 @@ public class HumanController : Player
                     selectedZ = (int)hitTransform.position.z;
 
                     bool point = false;
-                    
-                    if (gridController.GetUnit(selectedX, selectedZ)!=null)
+                    Unit u = gridController.GetUnit(selectedX, selectedZ);
+                    if (u!=null && u.player)
                     {
                         point = true;
                     }

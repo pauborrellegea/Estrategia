@@ -55,7 +55,7 @@ public class GameController : MonoBehaviour
         player.setSpawn(gridController.rows - 1, 0);
         ia.setSpawn(0, gridController.cols - 1);
 
-        gridController.GenerateInitMaps();
+        gridController.GenerateBaseInfluence();
     }
 
     public bool turnOfPlayer()
@@ -105,13 +105,12 @@ public class GameController : MonoBehaviour
         {
             ia.AddCoins(coinsPerTurn);
             ia.resetEndTurn();
-            //aiAgent.enabled = false;
         }
         else
         {
             player.AddCoins(coinsPerTurn);
             player.resetEndTurn();
-            //aiAgent.enabled = true;
+            gridController.UpdateUnitInfluences();
         }
     }
 

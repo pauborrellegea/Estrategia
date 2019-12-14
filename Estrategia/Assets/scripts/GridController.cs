@@ -28,6 +28,9 @@ public class GridController : MonoBehaviour
 
     public Transform scene;
 
+    private List<Unit> iaUnits;
+    private List<Unit> playerUnits;
+
     //Grids globales
     private Casilla[,] gridCells;
     private Unit[,] gridUnits;
@@ -41,14 +44,15 @@ public class GridController : MonoBehaviour
     //RAW MAPS
     public Casilla[,] terrainSeen;
     public int[,] iaVisibility;
-    //raw seeing enemy units
+    public Unit[,] unitsSeen;
 
     //mapas de influencia
-    public float[,] baseInfluence;
-    //seen units attack influence
-    //exploration influence (cuantas nuevas visibles o desconocidas suman)
-    //attack influence (* damage)
-    
+    public float[,] baseInfluence; //cercania a la base
+    public float[,] attackInfluence; //puntos que se pueden atacar en ese turno
+    public float[,] otherSeenAttackInfluence;
+    public float[,] explorationInfluence;
+    public float[,] terrainMobility;
+
 
     void Awake()
     {
@@ -56,23 +60,27 @@ public class GridController : MonoBehaviour
 
         gameController = GetComponent<GameController>();
 
+        iaUnits = new List<Unit>();
+        playerUnits = new List<Unit>();
+
         gridCells = new Casilla[rows, cols];
         gridUnits = new Unit[rows, cols];
         movementCells = new SingleMove[rows, cols];
         attackCells = new bool[rows, cols];
         playerVisibility = new int[rows, cols];
-        iaVisibility = new int[rows, cols];
 
+        terrainSeen = new Casilla[rows, cols];
+        iaVisibility = new int[rows, cols];
+        unitsSeen = new Unit[rows, cols];
 
         baseInfluence = new float[rows, cols];
-        terrainSeen = new Casilla[rows, cols];
+        attackInfluence = new float[rows, cols];
+        otherSeenAttackInfluence = new float[rows, cols];
+        explorationInfluence = new float[rows, cols];
+        terrainMobility = new float[rows, cols];
+
 
         GenerateMap();
-    }
-
-    public void GenerateInitMaps()
-    {
-        GenerateBaseInfluence();
     }
 
 
@@ -85,7 +93,12 @@ public class GridController : MonoBehaviour
     //hacer busqueda de profundidad para comprobar la visibilidad del jugador Y del enemigo (por separado)
     //tambien se puede hacer un pathfiding sencillo con esa bfs
 
-
+    public void UpdateUnitInfluences()
+    {
+        UpdateIASeenUnits();
+        GenerateIAAttackInfluence();
+        GenerateOtherAttackInfluence();
+    }
 
     public bool CanSpawnUnit(int x, int z)
     {
@@ -111,7 +124,41 @@ public class GridController : MonoBehaviour
         gridUnits[x, z] = unit;
         AddVisibility(x, z, unit.vision, true, unit.player);
 
+        if (unit.player)
+        {
+            playerUnits.Add(unit);
+        }
+        else
+        {
+            iaUnits.Add(unit);
+        }
+
         UpdateFog();
+        if (!gameController.turnOfPlayer())
+            UpdateUnitInfluences();
+    }
+
+    public void RemoveUnit(Unit unit, int x, int z)
+    {
+        gridUnits[x, z] = null;
+        unitsSeen[x, z] = null;
+        AddVisibility(x, z, unit.vision, false, unit.player);
+        if (unit.player)
+        {
+            playerUnits.Remove(unit);
+        }
+        else
+        {
+            iaUnits.Remove(unit);
+            if (!gameController.turnOfPlayer())
+                UpdateUnitInfluences();
+        }
+        Destroy(unit.gameObject);
+    }
+
+    public void AddIAUnit(Unit unit)
+    {
+        iaUnits.Add(unit);
     }
 
     public Unit GetUnit(int x, int z)
@@ -140,11 +187,15 @@ public class GridController : MonoBehaviour
             AddVisibility(toX, toZ, unit.vision, true, unit.player);
 
             UpdateFog();
+            if (!gameController.turnOfPlayer())
+                UpdateUnitInfluences();
         }
     }
 
     private void AddVisibility(int x, int z, int range, bool sum, bool player) //PROBLEMA: se ve visibilidad cuadriculada (puede ser la intencion pero no se) 
     {
+        bool terrainAdded = false;
+
         int v = sum ? 1 : -1;
         bool[,] visitedCells = new bool[rows, cols];
 
@@ -165,7 +216,11 @@ public class GridController : MonoBehaviour
             else
             {
                 iaVisibility[x, z] += v;
-                if (terrainSeen[x, z] == null) terrainSeen[x, z] = gridCells[x, z];
+                if (terrainSeen[x, z] == null)
+                {
+                    terrainSeen[x, z] = gridCells[x, z];
+                    terrainAdded = true;
+                }
             }
                 
 
@@ -201,6 +256,11 @@ public class GridController : MonoBehaviour
                     queue.Enqueue(new int[3] { x, z + 1, range - 1 });
                 }
             }
+        }
+
+        if (terrainAdded)
+        {
+            UpdateTerrainInfluence();
         }
     }
 
@@ -572,7 +632,7 @@ public class GridController : MonoBehaviour
 
     // MAPAS DE INFLUENCIA
     //*************************************************************
-    private void GenerateBaseInfluence()
+    public void GenerateBaseInfluence()
     {
         int spX = gameController.ia.otherBaseX;
         int spZ = gameController.ia.otherBaseZ;
@@ -595,29 +655,157 @@ public class GridController : MonoBehaviour
         {
             for (int z = 0; z < cols; z++)
             {
-                baseInfluence[x, z] = 1f - (baseInfluence[x, z]-min)/(max-min);
+                baseInfluence[x, z] = (baseInfluence[x, z]-min)/(max-min);
+            }
+        }
+    }
+
+    private void UpdateIASeenUnits()
+    {
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                if (iaVisibility[x, z]>0 && gridUnits[x, z]!=null && gridUnits[x, z].player)
+                {
+                    unitsSeen[x, z] = gridUnits[x, z];
+                } else
+                {
+                    unitsSeen[x, z] = null;
+                }
+            }
+        }
+    }
+
+    public void GenerateIAAttackInfluence()
+    {
+        attackInfluence = new float[rows, cols];
+        foreach (Unit unit in playerUnits)
+        {
+            if (unit.rangoDeAtaque>0 && !unit.hasAttacked)
+                AddAttackInfluence(ref attackInfluence, unit, (int)unit.transform.position.x, (int)unit.transform.position.z, unit.rangoDeAtaque + unit.remainingMoves);
+        }
+        float max = 10f; //maximo posible
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                attackInfluence[x, z] = 1f - attackInfluence[x, z]/ max;
+            }
+        }
+    }
+
+    private void GenerateOtherAttackInfluence()
+    {
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                if (unitsSeen[x, z] != null)
+                {
+                    AddAttackInfluence(ref otherSeenAttackInfluence, unitsSeen[x, z], x, z, unitsSeen[x, z].rangoDeAtaque);
+                }
+            }
+        }
+
+        float max = 10f; //maximo posible
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                otherSeenAttackInfluence[x, z] = otherSeenAttackInfluence[x, z] / max;
             }
         }
     }
 
 
+    private void AddAttackInfluence(ref float[,] matrixToEdit, Unit attacker, int posX, int posZ, int range)
+    {
+        for (int x = -range; x<=range; x++)
+        {
+            for (int z = -range+Mathf.Abs(x); z<=range- Mathf.Abs(x); z++)
+            {
+                if (posX + x >= 0 && posX + x < rows && posZ + z >= 0 && posZ + z < cols)
+                {
+                    if (matrixToEdit[posX+x, posZ+z] < attacker.ataque)
+                    {
+                        matrixToEdit[posX + x, posZ + z] = attacker.ataque;
+                    }
+                }
+            }
+        }
+    }
+
+    public void UpdateTerrainInfluence()
+    {
+        for (int x = 0; x < rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                if (terrainSeen[x, z])
+                    terrainMobility[x, z] = GaussianFilter5x5(x, z);
+            }
+        }
+    }
+
+    public float GaussianFilter5x5(int ox, int oz)
+    {
+        float[] values = new float[] { 6f, 4f, 1f };
+
+        float total = 0f;
+
+        for (int x = -2; x<=2; x++)
+        {
+            for (int z = -2; z <= 2; z++)
+            {
+                float mult = values[Mathf.Abs(x)] * values[Mathf.Abs(z)];
+                if (ox + x >= 0 && ox + x < rows && oz + z >= 0 && oz + z < cols)
+                {
+                    Casilla cell = terrainSeen[ox+x, oz+z];
+                    if (cell == null)
+                    {
+                        total += (0.5f*mult);
+                    } else if (cell.type == Casilla.CellType.MOUNTAIN)
+                    {
+                        total += (1f*mult);
+                    } else if (cell.type == Casilla.CellType.FOREST)
+                    {
+                        total += (0.3f*mult);
+                    }
+                } else
+                {
+                    total += (1f*mult);
+                }
+            }
+        }
+
+        return total / 246f;
+    }
+
 
     Texture2D GetTextureFromMap(MapDisplay map)
     {
-        if (map == MapDisplay.RAWCELLS) { return GenerateTexture(gridCells); }
-        if (map == MapDisplay.RAWUNITS) { return GenerateTexture(gridUnits); }
-        if (map == MapDisplay.IA_VISIBILITY) { return GenerateTexture(iaVisibility); }
-        if (map == MapDisplay.PL_VISIBILITY) { return GenerateTexture(playerVisibility); }
-        if (map == MapDisplay.PL_ATTACK) { return GenerateTexture(attackCells); }
-        if (map == MapDisplay.BASE_INF) { return GenerateTexture(baseInfluence); }
-        if (map == MapDisplay.SEEN_MAP_RAW) { return GenerateTexture(terrainSeen); }
+        if (map == MapDisplay.RAWCELLS) { return GenerateTexture(ref gridCells); }
+        if (map == MapDisplay.RAWUNITS) { return GenerateTexture(ref gridUnits); }
+        if (map == MapDisplay.IA_VISIBILITY) { return GenerateTexture(ref iaVisibility); }
+        if (map == MapDisplay.PL_VISIBILITY) { return GenerateTexture(ref playerVisibility); }
+        if (map == MapDisplay.PL_ATTACK) { return GenerateTexture(ref attackCells); }
+        if (map == MapDisplay.BASE_INF) { return GenerateTexture(ref baseInfluence); }
+        if (map == MapDisplay.SEEN_MAP_RAW) { return GenerateTexture(ref terrainSeen); }
+        if (map == MapDisplay.SEEN_UNITS_RAW) { return GenerateTexture(ref unitsSeen); }
+        if (map == MapDisplay.IA_ATT_INF) { return GenerateTexture(ref attackInfluence); }
+        if (map == MapDisplay.OTHER_ATT_INF) { return GenerateTexture(ref otherSeenAttackInfluence); }
+        if (map == MapDisplay.EXPLORATION_INF) { return GenerateTexture(ref explorationInfluence); }
+        if (map == MapDisplay.TERRAIN_INF) { return GenerateTexture(ref terrainMobility); }
 
 
         return new Texture2D(rows, cols);
 
     }
 
-    Texture2D GenerateTexture(Casilla[,] matrix)
+    Texture2D GenerateTexture(ref Casilla[,] matrix)
     {
         Texture2D texture = new Texture2D(rows, cols);
         texture.filterMode = FilterMode.Point;
@@ -643,7 +831,7 @@ public class GridController : MonoBehaviour
         texture.Apply();
         return texture;
     }
-    Texture2D GenerateTexture(Unit[,] matrix)
+    Texture2D GenerateTexture(ref Unit[,] matrix)
     {
         Texture2D texture = new Texture2D(rows, cols);
         texture.filterMode = FilterMode.Point;
@@ -669,7 +857,7 @@ public class GridController : MonoBehaviour
         texture.Apply();
         return texture;
     }
-    Texture2D GenerateTexture(bool[,] matrix)
+    Texture2D GenerateTexture(ref bool[,] matrix)
     {
         Texture2D texture = new Texture2D(rows, cols);
         texture.filterMode = FilterMode.Point;
@@ -693,7 +881,7 @@ public class GridController : MonoBehaviour
         return texture;
     }
 
-    Texture2D GenerateTexture(int[,] matrix) //visibilidad
+    Texture2D GenerateTexture(ref int[,] matrix) //visibilidad
     {
         Texture2D texture = new Texture2D(rows, cols);
         texture.filterMode = FilterMode.Point;
@@ -717,7 +905,7 @@ public class GridController : MonoBehaviour
         texture.Apply();
         return texture;
     }
-    Texture2D GenerateTexture(float[,] matrix)
+    Texture2D GenerateTexture(ref float[,] matrix)
     {
         Texture2D texture = new Texture2D(rows, cols);
         texture.filterMode = FilterMode.Point;
@@ -741,7 +929,7 @@ public class GridController : MonoBehaviour
                 if (max==min) texture.SetPixel(x, y, Color.black);
                 else
                 {
-                    float sample = (matrix[x, y] - min) / (max-min);
+                    float sample = 1f - (matrix[x, y] - min) / (max-min);
                     texture.SetPixel(x, y, new Color(sample, sample, sample));
                 }
             }
@@ -753,7 +941,7 @@ public class GridController : MonoBehaviour
 
 public enum MapDisplay
 {
-    RAWCELLS, RAWUNITS, PL_ATTACK, PL_VISIBILITY, IA_VISIBILITY, BASE_INF, SEEN_MAP_RAW
+    RAWCELLS, RAWUNITS, PL_ATTACK, PL_VISIBILITY, IA_VISIBILITY, BASE_INF, SEEN_MAP_RAW, SEEN_UNITS_RAW, IA_ATT_INF, OTHER_ATT_INF, EXPLORATION_INF, TERRAIN_INF
 }
 
 
