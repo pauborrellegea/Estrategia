@@ -76,7 +76,7 @@ public class HumanController : Player
             selectedUnit = null;
             circuloSeleccion.SetActive(false);
 
-            gridController.SetMovement(null);
+            gridController.SelectedMovement(null);
             gridController.SetAttack(null);
 
             SubstractCoins(attackCost);
@@ -146,7 +146,7 @@ public class HumanController : Player
             {
                 attackButton.text = "Move";
                 attacking = true;
-                gridController.SetMovement(null);
+                gridController.SelectedMovement(null);
                 gridController.SetAttack(selectedUnit);
             }
         }
@@ -155,7 +155,7 @@ public class HumanController : Player
             attackButton.text = "Attack";
             attacking = false;
             gridController.SetAttack(null);
-            gridController.SetMovement(selectedUnit);
+            gridController.SelectedMovement(selectedUnit);
         }
     }
 
@@ -173,7 +173,7 @@ public class HumanController : Player
                 selectedUnit = null;
                 circuloSeleccion.SetActive(false);
 
-                gridController.SetMovement(null);
+                gridController.SelectedMovement(null);
                 gridController.SetAttack(null);
 
                 SubstractCoins(moveCost);
@@ -185,7 +185,7 @@ public class HumanController : Player
     public override void resetEndTurn()
     {
         selectedUnit = null;
-        gridController.SetMovement(null);
+        gridController.SelectedMovement(null);
         gridController.SetAttack(null);
         attacking = false;
         attackButton.text = "Attack";
@@ -287,14 +287,14 @@ public class HumanController : Player
                                 circuloSeleccion.SetActive(true);
                                 circuloSeleccion.transform.position = selectedUnit.transform.position;
 
-                                gridController.SetMovement(selectedUnit);
+                                gridController.SelectedMovement(selectedUnit);
                             }
                             else
                             {
                                 selectedUnit = null;
                                 circuloSeleccion.SetActive(false);
 
-                                gridController.SetMovement(selectedUnit);
+                                gridController.SelectedMovement(selectedUnit);
                             }
                         }
 
@@ -372,7 +372,7 @@ public class HumanController : Player
             circuloHighlight.SetActive(false);
             circuloSeleccion.SetActive(false);
             selectedUnit = null;
-            gridController.SetMovement(null);
+            gridController.SelectedMovement(null);
         }
         
     }

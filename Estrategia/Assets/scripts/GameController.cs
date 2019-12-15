@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        //aiAgent.enabled = false;
+        aiAgent.enabled = false;
 
         ticks = 0f;
         gridController = GetComponent<GridController>();
@@ -105,13 +105,17 @@ public class GameController : MonoBehaviour
         {
             ia.AddCoins(coinsPerTurn);
             ia.resetEndTurn();
+            aiAgent.enabled = false;
         }
         else
         {
             player.AddCoins(coinsPerTurn);
             player.resetEndTurn();
             gridController.UpdateUnitInfluences();
+            aiAgent.enabled = true;
         }
+
+        aiAgent.ResetActions();
     }
 
     public void AttackBase(int amount, bool p)

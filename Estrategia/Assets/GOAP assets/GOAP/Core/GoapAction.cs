@@ -502,6 +502,11 @@ namespace SwordGC.AI.Goap
             public const string IS_GONER = "IsGoner";
             public const string SAME_TEAM = "SameTeam";
             public const string DASHED_AT = "DashedAt";
+
+
+            public const string SPAWN_FREE = "SpawnFree";
+            public const string IS_TURN = "IsTurn";
+            public const string HAS_COINS = "HasCoins";
         }
     }
 }

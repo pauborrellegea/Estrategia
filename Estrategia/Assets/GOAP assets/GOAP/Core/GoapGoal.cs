@@ -124,6 +124,7 @@ namespace SwordGC.AI.Goap
             public const string STAY_ALIVE = "StayAlive";
 
             public const string CREATE_UNIT = "CreateUnit";
+            public const string EXPLORE = "Explore";
         }
     }
 }

@@ -58,7 +58,7 @@ public class mouseManager : MonoBehaviour
                     circuloSeleccion.SetActive(true);
                     circuloSeleccion.transform.position = selectedUnit.transform.position;
 
-                    gridController.SetMovement(selectedUnit);
+                    gridController.SelectedMovement(selectedUnit);
                 }
                 else //mover seleccion
                 {
@@ -71,7 +71,7 @@ public class mouseManager : MonoBehaviour
                             selectedUnit = null;
                             circuloSeleccion.SetActive(false);
 
-                            gridController.SetMovement(null);
+                            gridController.SelectedMovement(null);
                         }
                     }
                 }

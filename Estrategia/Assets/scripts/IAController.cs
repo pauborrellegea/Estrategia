@@ -150,6 +150,11 @@ public class IAController : Player
         return gameController.spawnableUnits[(int)type].coste <= coins;
     }
 
+    public bool HasCoinsForAnyUnit()
+    {
+        return coins >= 40;
+    }
+
     public bool HasCoinsForAttack()
     {
         return coins >= attackCost;
@@ -163,6 +168,33 @@ public class IAController : Player
     public bool CanSpawn()
     {
         return gridController.CanSpawnUnit(spawnX, spawnZ);
+    }
+
+    public float ExploreMultiplier()
+    {
+        return 15f / gridController.explorationImportance;
+    }
+
+    public void GetBestPosition(ref SingleMove[,] moves, ref int outX, ref int outZ)
+    {
+        float bestCost = Mathf.Infinity;
+
+        for (int x = 0; x< gridController.rows; x++)
+        {
+            for (int z = 0; z < gridController.cols; z++)
+            {
+                if (moves[x, z]!=null)
+                {
+                    float c = gridController.TacticMoveCost(x, z);
+                    if (c < bestCost)
+                    {
+                        bestCost = c;
+                        outX = x;
+                        outZ = z;
+                    }
+                }
+            }
+        }
     }
 
 
@@ -298,5 +330,25 @@ public class IAController : Player
         }
 
         return best;
+    }
+
+
+
+    //move unit at spawn
+    public void MoveUnitAtSpawn()
+    {
+        Unit unit = gridController.GetUnit(spawnX, spawnZ);
+        if (unit != null)
+        {
+            SingleMove[,] moves = new SingleMove[gridController.rows, gridController.cols];
+
+            gridController.SetMovement(unit, ref moves);
+
+            int x = 0, z = 0;
+
+            GetBestPosition(ref moves, ref x, ref z);
+
+            MoveUnit(unit, x, z);
+        }
     }
 }

@@ -9,36 +9,56 @@ namespace SwordGC.AI.Actions
     {
         private IAController ia;
 
-        public CreateUnitAction(GoapAgent agent, IAController ia) : base(agent)
+        private AIAgent myAgent;
+
+        private bool performed = false; //evita repetir acciones
+
+        public CreateUnitAction(AIAgent agent, IAController ia) : base(agent as GoapAgent)
         {
+            this.myAgent = agent;
             this.ia = ia;
 
-            //preconditions.Add(Effects.HAS_OBJECT, true);
-            effects.Add(Effects.HAS_OBJECT, false);
+            preconditions.Add(Effects.SPAWN_FREE, true);
+            preconditions.Add(Effects.IS_TURN, true);
+            preconditions.Add(Effects.HAS_COINS, true);
+            effects.Add(Effects.SPAWN_FREE, false);
+            effects.Add(Effects.HAS_COINS, false);
             //goal 
             goal = GoapGoal.Goals.CREATE_UNIT;
 
             targetString = "Empty"; //
             requiredRange = 1000f; //
 
-            cost = 10;
-            
+            cost = 30;
+
+            delay = 0f;
+            delaySlow = 2f;
         }
 
         public override void Perform()
         {
-            ia.CreateUnit(UnitType.BASICA);
-            ia.EndTurn();
+            if (!performed)
+            {
+                ia.CreateUnit(UnitType.BASICA);
+                performed = true;
+                myAgent.ResetActions();
+            }
+            else
+            {
+                //ia.EndTurn();
+            }
+            
         }
 
         public override GoapAction Clone()
         {
-            return new CreateUnitAction(agent, ia).SetClone(originalObjectGUID);
+            return new CreateUnitAction(myAgent, ia).SetClone(originalObjectGUID);
         }
 
         protected override bool CheckProceduralPreconditions(DataSet data)
         {
             if (!ia.isTurn()) return false;
+            if (!ia.CanSpawn()) return false;
 
             return ia.HasCoinsFor(UnitType.BASICA);
         }

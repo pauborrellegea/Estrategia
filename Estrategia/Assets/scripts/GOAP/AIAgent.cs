@@ -8,6 +8,8 @@ public class AIAgent : GoapAgent
 {
     private IAController ia;
 
+    
+
     public override void Awake()
     {
         base.Awake();
@@ -16,13 +18,21 @@ public class AIAgent : GoapAgent
 
         //create goals
         goals.Add(GoapGoal.Goals.CREATE_UNIT, new CreateGoal(GoapGoal.Goals.CREATE_UNIT, 1f));
-
-        //idleAction = new CreateUnitAction(this, ia);
+        goals.Add(GoapGoal.Goals.EXPLORE, new ExploreGoal(GoapGoal.Goals.EXPLORE, ia.ExploreMultiplier()));
 
 
         //create actions
-        dataSet.SetData(GoapAction.Effects.HAS_OBJECT, true);
-        possibleActions.Add(new CreateUnitAction(this, ia));
+        AddAction(new CreateUnitAction(this, ia));
+        //AddAction(new MoveSpawnAction(this, ia));
+
+    }
+
+    public void ResetActions()
+    {
+        dataSet.SetData(GoapAction.Effects.SPAWN_FREE, ia.CanSpawn());
+        dataSet.SetData(GoapAction.Effects.IS_TURN, ia.isTurn());
+        dataSet.SetData(GoapAction.Effects.HAS_COINS, ia.HasCoinsForAnyUnit());
+
     }
     
 }

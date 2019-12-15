@@ -111,7 +111,7 @@ namespace SwordGC.AI.Goap {
             addActions = new List<GoapAction>();
 
             dataSet = new DataSet();
-            dataSet.SetData(GoapAction.Effects.HAS_OBJECT, false);
+            //dataSet.SetData(GoapAction.Effects.HAS_OBJECT, false);
         }
         
         public virtual void Start() {
@@ -175,7 +175,7 @@ namespace SwordGC.AI.Goap {
             if (ActiveAction != null)
             {
                 ActiveAction.Run(Time.deltaTime);
-
+                
                 if (ActiveAction.target != null && ActiveActionInRange)
                 {
                     state = STATE.ACTION;
