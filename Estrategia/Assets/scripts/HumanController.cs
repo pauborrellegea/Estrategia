@@ -165,7 +165,7 @@ public class HumanController : Player
 
         if (gridController.CanMove(selectedX, selectedZ))
         {
-            int moveCost = gridController.MoveCost(newX, newZ);
+            int moveCost = (int)gridController.MoveCost(newX, newZ);
             if (moveCost<=coins) //y le quedan movimientos
             {
                 gridController.MoveUnit(selectedUnit, selectedX, selectedZ);

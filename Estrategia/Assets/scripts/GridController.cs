@@ -25,7 +25,7 @@ public class GridController : MonoBehaviour
     public int rows = 30; //mejor que sean iguales
     public int cols = 30;
 
-    int forestCost = 2;
+    public int forestCost = 2;
 
     public Transform scene;
 
@@ -127,7 +127,7 @@ public class GridController : MonoBehaviour
         return movementCells[x, z]!=null;
     }
 
-    public int MoveCost(int x, int z) //no deberia poder entrar con nulo
+    public float MoveCost(int x, int z) //no deberia poder entrar con nulo
     {
         return movementCells[x, z].cost;
     }
@@ -135,6 +135,14 @@ public class GridController : MonoBehaviour
     public bool CanAttack(int x, int z)
     {
         return attackCells[x, z];
+    }
+
+    public bool IA_CanAttack(Unit attacker, int oX, int oZ)
+    {
+        int atX = (int)attacker.transform.position.x;
+        int atZ = (int)attacker.transform.position.z;
+
+        return Mathf.Abs(atX - oX) + Mathf.Abs(atZ - oZ) <= attacker.rangoDeAtaque;
     }
 
     public void AddUnit(Unit unit, int x, int z)
@@ -182,6 +190,11 @@ public class GridController : MonoBehaviour
     public Unit GetUnit(int x, int z)
     {
         return gridUnits[x, z];
+    }
+
+    public Casilla GetCell(int x, int z)
+    {
+        return gridCells[x, z];
     }
 
     public void MoveUnit(Unit unit, int toX, int toZ)
@@ -313,7 +326,7 @@ public class GridController : MonoBehaviour
 
             Queue<int[]> queue = new Queue<int[]>();
 
-            movementCells[x, z] = new SingleMove(0, Direction.NONE);
+            movementCells[x, z] = new SingleMove(0, Direction.NONE, x, z);
             queue.Enqueue(new int[3] { x, z, range });
 
             while (queue.Count > 0)
@@ -330,12 +343,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x - 1, z] == null && range < maxCost && gridUnits[x - 1, z] == null)
                             {
-                                movementCells[x - 1, z] = new SingleMove(range + 1, Direction.RIGHT);
+                                movementCells[x - 1, z] = new SingleMove(range + 1, Direction.RIGHT, x - 1, z);
                                 queue.Enqueue(new int[3] { x - 1, z, range + 1 });
                             }
                             else if (movementCells[x - 1, z] != null && movementCells[x - 1, z].cost > range + 1 && gridUnits[x - 1, z] == null)
                             {
-                                movementCells[x - 1, z] = new SingleMove(range + 1, Direction.RIGHT);
+                                movementCells[x - 1, z] = new SingleMove(range + 1, Direction.RIGHT, x - 1, z);
                                 queue.Enqueue(new int[3] { x - 1, z, range + 1 });
                             }
                         }
@@ -343,12 +356,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x - 1, z] == null && gridUnits[x - 1, z] == null)
                             {
-                                movementCells[x - 1, z] = new SingleMove(range + forestCost, Direction.RIGHT);
+                                movementCells[x - 1, z] = new SingleMove(range + forestCost, Direction.RIGHT, x - 1, z);
                                 queue.Enqueue(new int[3] { x - 1, z, range + forestCost });
                             }
                             else if (movementCells[x - 1, z] != null && movementCells[x - 1, z].cost > range + forestCost && gridUnits[x - 1, z] == null)
                             {
-                                movementCells[x - 1, z] = new SingleMove(range + forestCost, Direction.RIGHT);
+                                movementCells[x - 1, z] = new SingleMove(range + forestCost, Direction.RIGHT, x - 1, z);
                                 queue.Enqueue(new int[3] { x - 1, z, range + forestCost });
                             }
                         }
@@ -360,12 +373,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x + 1, z] == null && range < maxCost && gridUnits[x + 1, z] == null)
                             {
-                                movementCells[x + 1, z] = new SingleMove(range + 1, Direction.LEFT);
+                                movementCells[x + 1, z] = new SingleMove(range + 1, Direction.LEFT, x + 1, z);
                                 queue.Enqueue(new int[3] { x + 1, z, range + 1 });
                             }
                             else if (movementCells[x + 1, z] != null && movementCells[x + 1, z].cost > range + 1 && gridUnits[x + 1, z] == null)
                             {
-                                movementCells[x + 1, z] = new SingleMove(range + 1, Direction.LEFT);
+                                movementCells[x + 1, z] = new SingleMove(range + 1, Direction.LEFT, x + 1, z);
                                 queue.Enqueue(new int[3] { x + 1, z, range + 1 });
                             }
                         }
@@ -373,12 +386,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x + 1, z] == null && gridUnits[x + 1, z] == null)
                             {
-                                movementCells[x + 1, z] = new SingleMove(range + forestCost, Direction.LEFT);
+                                movementCells[x + 1, z] = new SingleMove(range + forestCost, Direction.LEFT, x + 1, z);
                                 queue.Enqueue(new int[3] { x + 1, z, range + forestCost });
                             }
                             else if (movementCells[x + 1, z] != null && movementCells[x + 1, z].cost > range + forestCost && gridUnits[x + 1, z] == null)
                             {
-                                movementCells[x + 1, z] = new SingleMove(range + forestCost, Direction.LEFT);
+                                movementCells[x + 1, z] = new SingleMove(range + forestCost, Direction.LEFT, x + 1, z);
                                 queue.Enqueue(new int[3] { x + 1, z, range + forestCost });
                             }
                         }
@@ -390,12 +403,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x, z - 1] == null && range < maxCost && gridUnits[x, z - 1] == null)
                             {
-                                movementCells[x, z - 1] = new SingleMove(range + 1, Direction.UP);
+                                movementCells[x, z - 1] = new SingleMove(range + 1, Direction.UP, x, z - 1);
                                 queue.Enqueue(new int[3] { x, z - 1, range + 1 });
                             }
                             else if (movementCells[x, z - 1] != null && movementCells[x, z - 1].cost > range + 1 && gridUnits[x, z - 1] == null)
                             {
-                                movementCells[x, z - 1] = new SingleMove(range + 1, Direction.UP);
+                                movementCells[x, z - 1] = new SingleMove(range + 1, Direction.UP, x, z - 1);
                                 queue.Enqueue(new int[3] { x, z - 1, range + 1 });
                             }
                         }
@@ -403,12 +416,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x, z - 1] == null && gridUnits[x, z - 1] == null)
                             {
-                                movementCells[x, z - 1] = new SingleMove(range + forestCost, Direction.UP);
+                                movementCells[x, z - 1] = new SingleMove(range + forestCost, Direction.UP, x, z - 1);
                                 queue.Enqueue(new int[3] { x, z - 1, range + forestCost });
                             }
                             else if (movementCells[x, z - 1] != null && movementCells[x, z - 1].cost > range + forestCost && gridUnits[x, z - 1] == null)
                             {
-                                movementCells[x, z - 1] = new SingleMove(range + forestCost, Direction.UP);
+                                movementCells[x, z - 1] = new SingleMove(range + forestCost, Direction.UP, x, z - 1);
                                 queue.Enqueue(new int[3] { x, z - 1, range + forestCost });
                             }
                         }
@@ -420,12 +433,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x, z + 1] == null && range < maxCost && gridUnits[x, z + 1] == null)
                             {
-                                movementCells[x, z + 1] = new SingleMove(range + 1, Direction.DOWN);
+                                movementCells[x, z + 1] = new SingleMove(range + 1, Direction.DOWN, x, z + 1);
                                 queue.Enqueue(new int[3] { x, z + 1, range + 1 });
                             }
                             else if (movementCells[x, z + 1] != null && movementCells[x, z + 1].cost > range + 1 && gridUnits[x, z + 1] == null)
                             {
-                                movementCells[x, z + 1] = new SingleMove(range + 1, Direction.DOWN);
+                                movementCells[x, z + 1] = new SingleMove(range + 1, Direction.DOWN, x, z + 1);
                                 queue.Enqueue(new int[3] { x, z + 1, range + 1 });
                             }
                         }
@@ -433,12 +446,12 @@ public class GridController : MonoBehaviour
                         {
                             if (movementCells[x, z + 1] == null && gridUnits[x, z + 1] == null)
                             {
-                                movementCells[x, z + 1] = new SingleMove(range + forestCost, Direction.DOWN);
+                                movementCells[x, z + 1] = new SingleMove(range + forestCost, Direction.DOWN, x, z + 1);
                                 queue.Enqueue(new int[3] { x, z + 1, range + forestCost });
                             }
                             else if (movementCells[x, z + 1] != null && movementCells[x, z + 1].cost > range + forestCost && gridUnits[x, z + 1] == null)
                             {
-                                movementCells[x, z + 1] = new SingleMove(range + forestCost, Direction.UP);
+                                movementCells[x, z + 1] = new SingleMove(range + forestCost, Direction.DOWN, x, z + 1);
                                 queue.Enqueue(new int[3] { x, z + 1, range + forestCost });
                             }
                         }
@@ -645,6 +658,20 @@ public class GridController : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    public float TacticMoveCost(int x, int z)
+    {
+        baseImportance = Random.Range(7f, 15f);
+        attackImportance = Random.Range(1f, 10f);
+        otherAttackImportance = Random.Range(1f, 10f);
+        explorationImportance = Random.Range(1f, 10f);
+        mobilityImportance = Random.Range(1f, 10f);
+
+        return baseImportance * baseInfluence[x, z] + attackImportance * attackInfluence[x, z] +
+            otherAttackImportance * otherSeenAttackInfluence[x, z] + explorationImportance * explorationInfluence[x, z] +
+            mobilityImportance * terrainMobility[x, z];
     }
 
 
@@ -1053,12 +1080,16 @@ public enum MapDisplay
 
 public class SingleMove
 {
-    public int cost;
+    public int x;
+    public int z;
+    public float cost;
     public Direction comesFrom;
 
-    public SingleMove(int c, Direction d)
+    public SingleMove(float c, Direction d, int x, int z)
     {
         cost = c;
         comesFrom = d;
+        this.x = x;
+        this.z = z;
     }
 }
