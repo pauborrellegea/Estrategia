@@ -247,7 +247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 866890644}
   ia: {fileID: 278185924}
-  aiAgent: {fileID: 278185926}
+  aiAgent: {fileID: 0}
   spawnableUnits:
   - {fileID: 6264873088619786434, guid: a58a52b3c3a326f4da9ae94bc43aae4d, type: 3}
   - {fileID: 4727722495777457684, guid: a7197fb5586d56945b35c9edf2ca8927, type: 3}
@@ -291,7 +291,14 @@ MonoBehaviour:
   cutForest: 0.35
   rows: 30
   cols: 30
+  forestCost: 2
   scene: {fileID: 1743646994}
+  maxAtackInf: 0
+  baseImportance: 0
+  attackImportance: 0
+  otherAttackImportance: 0
+  explorationImportance: 0
+  mobilityImportance: 0
 --- !u!1 &278185923
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +309,6 @@ GameObject:
   m_Component:
   - component: {fileID: 278185925}
   - component: {fileID: 278185924}
-  - component: {fileID: 278185926}
   m_Layer: 0
   m_Name: IA
   m_TagString: Untagged
@@ -345,19 +351,6 @@ Transform:
   m_Father: {fileID: 223678420}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &278185926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278185923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dd0979ce494d2440b543fe0c7da93e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  editorDirty: 0
 --- !u!1 &350808379
 GameObject:
   m_ObjectHideFlags: 0

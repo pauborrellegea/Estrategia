@@ -68,6 +68,8 @@
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\GoalNode.cs" />
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\Node.cs" />
     <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\NodeViewWindow.cs" />
+    <Compile Include="Assets\PandaBehaviour\Core\Editor\CreatePandaScriptMenu.cs" />
+    <Compile Include="Assets\PandaBehaviour\Core\Editor\PandaBehaviourEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>
@@ -292,6 +294,12 @@
     </Reference>
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    </Reference>
+    <Reference Include="PandaBehaviour">
+      <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Assets/PandaBehaviour/Core/PandaBehaviour.dll</HintPath>
+    </Reference>
+    <Reference Include="PandaBehaviourEditor">
+      <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Assets/PandaBehaviour/Core/Editor/PandaBehaviourEditor.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>

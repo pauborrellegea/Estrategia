@@ -80,29 +80,62 @@
     <Compile Include="Assets\GOAP assets\GOAP\Examples\Throwable.cs" />
     <Compile Include="Assets\Objects\Scripts\Movimiento.cs" />
     <Compile Include="Assets\Objects\Scripts\MovimientoCamara.cs" />
+    <Compile Include="Assets\PandaBehaviour\Core\PandaBehaviour.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\00_ChangeColor\Assets\MyCube.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\01_Move\Assets\Move.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\Computer.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\Dialogue.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\Player.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\AI.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\AIVision.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Bullet.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\BulletImpact.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\FollowCamera.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\HUD.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Patroller.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\ShooterGameController.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\TriggerType.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Unit.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\UnitExplosion.cs" />
+    <Compile Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\WaypointPath.cs" />
     <Compile Include="Assets\scripts\AttackAnimation.cs" />
     <Compile Include="Assets\scripts\Casilla.cs" />
     <Compile Include="Assets\scripts\Direction.cs" />
     <Compile Include="Assets\scripts\GameController.cs" />
-    <Compile Include="Assets\scripts\GOAP\actions\CreateUnitAction.cs" />
-    <Compile Include="Assets\scripts\GOAP\actions\EndTurnAction.cs" />
-    <Compile Include="Assets\scripts\GOAP\actions\MoveSpawnAction.cs" />
-    <Compile Include="Assets\scripts\GOAP\AIAgent.cs" />
-    <Compile Include="Assets\scripts\GOAP\goals\CreateGoal.cs" />
-    <Compile Include="Assets\scripts\GOAP\goals\ExploreGoal.cs" />
     <Compile Include="Assets\scripts\GridController.cs" />
     <Compile Include="Assets\scripts\HumanController.cs" />
     <Compile Include="Assets\scripts\IAController.cs" />
     <Compile Include="Assets\scripts\no usados\celdasAdyacentes.cs" />
     <Compile Include="Assets\scripts\no usados\mouseManager.cs" />
     <Compile Include="Assets\scripts\no usados\nieblaController.cs" />
+    <Compile Include="Assets\scripts\no usados\old\actions\CreateUnitAction.cs" />
+    <Compile Include="Assets\scripts\no usados\old\actions\EndTurnAction.cs" />
+    <Compile Include="Assets\scripts\no usados\old\actions\MoveSpawnAction.cs" />
+    <Compile Include="Assets\scripts\no usados\old\AIAgent.cs" />
+    <Compile Include="Assets\scripts\no usados\old\goals\CreateGoal.cs" />
+    <Compile Include="Assets\scripts\no usados\old\goals\ExploreGoal.cs" />
     <Compile Include="Assets\scripts\no usados\OLDplayerController.cs" />
     <Compile Include="Assets\scripts\Player.cs" />
     <Compile Include="Assets\scripts\Unit.cs" />
     <Compile Include="Assets\scripts\UnitType.cs" />
     <Compile Include="Assets\unidades\basica\scripts\rotator.cs" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Patroller.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\01_Move\Assets\Move.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\TagDialogue.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Core\PandaBehaviour.xml" />
+    <None Include="Assets\PandaBehaviour\README.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Player.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Sniper.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\00_ChangeColor\Assets\ChangeColor.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\Hunter.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\AI.BT.lib.txt" />
     <None Include="Assets\unidades\espada\shaders\pbrDoublesided.shader" />
+    <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\Computer.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\GameController.BT.txt" />
     <None Include="Assets\unidades\basica\shaders\doublesidedshader.shader" />
+    <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\PlayTag.commented.BT.txt" />
+    <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\PlayTag.BT.txt" />
+    <None Include="Assets\PandaBehaviour\ChangeLog.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
@@ -306,6 +339,9 @@
     </Reference>
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="PandaBehaviour">
+      <HintPath>D:/Documents/Github/Zoologic/Estrategia/Estrategia/Assets/PandaBehaviour/Core/PandaBehaviour.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
