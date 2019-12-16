@@ -5,22 +5,50 @@ tree("Root")
 			tree("CreateUnit")
 			tree("MoveUnit")
 			tree("EndTurn")
+			tree("Attack")
 
 tree("CreateUnit")
 	sequence
 		fallback
+			CanSpawn
 			MoveUnitFromSpawn
+			Wait(1.0)
+		sequence
+			CanSpawn
 			CreateControlledUnit
-		Wait(1.0)
-		MoveUnitFromSpawn
+			Wait(0.5)
+			MoveUnitFromSpawn
 
 
 tree("MoveUnit")
 	sequence
 		HasUnits
 		MoveUnitWithInfluence
+		Wait(1.0)
+
+tree("Attack")
+	sequence
+		mute 
+			sequence
+				CanAttackBase
+				AttackBaseOnce
+				Wait(2.0)
+		EnemyInRange
+		fallback
+			TryToKill
+			random
+				AttackOnce
+				Succeed
+			Wait(1.0)
+		
 
 tree("EndTurn")
 	sequence
-		not HasCoins(20)
+		fallback
+			not HasCoins(20)
+			not CanSpawn
+			sequence
+				HasUnits
+				not HasUnitsToMove
+		Wait(1.5)
 		PassTurn

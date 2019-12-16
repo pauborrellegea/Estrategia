@@ -6,7 +6,7 @@ using Panda;
 
 public class IAController : Player
 {
-
+    Unit unitToAttack = null;
     private void Start()
     {
         player = false;
@@ -118,7 +118,8 @@ public class IAController : Player
     {
         return gameController.turnOfPlayer() == player;
     }
-    
+
+    [Panda.Task]
     public bool CanSpawn()
     {
         return gridController.CanSpawnUnit(spawnX, spawnZ);
@@ -176,7 +177,7 @@ public class IAController : Player
             if (x > 0)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x - 1, z);
-                if (gridController.GetSeenCell(x - 1, z)==null || (gridController.GetSeenCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x - 1, z) == null))
+                if (gridController.GetCell(x - 1, z)==null || (gridController.GetCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x - 1, z) == null))
                     if (moves[x - 1, z] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x - 1, z);
@@ -191,7 +192,7 @@ public class IAController : Player
             if (x < gridController.rows - 1)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x + 1, z);
-                if (gridController.GetSeenCell(x + 1, z) == null || (gridController.GetSeenCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x + 1, z) == null))
+                if (gridController.GetCell(x + 1, z) == null || (gridController.GetCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x + 1, z) == null))
                     if (moves[x + 1, z] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x + 1, z);
@@ -207,7 +208,7 @@ public class IAController : Player
             if (z > 0)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z - 1);
-                if (gridController.GetSeenCell(x, z - 1) == null || (gridController.GetSeenCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x, z - 1) == null))
+                if (gridController.GetCell(x, z - 1) == null || (gridController.GetCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z - 1) == null))
                     if (moves[x, z - 1] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z - 1);
@@ -223,7 +224,7 @@ public class IAController : Player
             if (z < gridController.cols - 1)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z + 1);
-                if (gridController.GetSeenCell(x, z + 1) == null || (gridController.GetSeenCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x, z + 1) == null))
+                if (gridController.GetCell(x, z + 1) == null || (gridController.GetCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z + 1) == null))
                     if (moves[x, z + 1] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z + 1);
@@ -253,7 +254,8 @@ public class IAController : Player
 
         while (obj!=null && !(obj.x == initX && obj.z == initZ))
         {
-            listMoves.Add(obj);
+            if (gridController.GetCell(obj.x, obj.z).type!=Casilla.CellType.MOUNTAIN && gridController.GetCell(obj.x, obj.z).type != Casilla.CellType.TOWER && gridController.GetUnit(obj.x, obj.z) == null)
+                listMoves.Add(obj);
             obj = obj.comesFrom;
         }
 
@@ -269,7 +271,7 @@ public class IAController : Player
         SingleMove best = null;
         foreach (SingleMove move in cola)
         {
-            if (move.cost < min)
+            if (move.cost < min || best==null)
             {
                 min = move.cost;
                 best = move;
@@ -367,7 +369,7 @@ public class IAController : Player
         foreach (Unit u in gridController.iaUnits)
         {
             float inf = gridController.TacticMoveCost((int)u.transform.position.x, (int)u.transform.position.z);
-            if (u.remainingMoves>0 && inf > lessInf)
+            if (u.remainingMoves>0 && isNotBlocked(u) && inf > lessInf)
             {
                 lessInf = inf;
                 worseUnit = u;
@@ -433,4 +435,254 @@ public class IAController : Player
         return bestI;
     }
 
+    [Panda.Task]
+    public bool HasUnitsToMove()
+    {
+        foreach (Unit unit in gridController.iaUnits)
+        {
+            if (unit.remainingMoves > 0 && isNotBlocked(unit))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool isNotBlocked(Unit unit)
+    {
+        int x = (int)unit.transform.position.x;
+        int z = (int)unit.transform.position.z;
+
+        if (x > 0 && gridController.GetCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x - 1, z) == null) return true;
+        if (x < gridController.rows-1 && gridController.GetCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x + 1, z) == null) return true;
+        if (z < gridController.cols - 1 && gridController.GetCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z + 1) == null) return true;
+        if (z > 0 && gridController.GetCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z - 1) == null) return true;
+
+
+        return false;
+    }
+
+    [Panda.Task]
+    public bool EnemyInRange()
+    {
+        foreach (Unit unit in gridController.playerUnits)
+        {
+            int x = (int)unit.transform.position.x;
+            int z = (int)unit.transform.position.z;
+            if (gridController.iaVisibility[x, z]>0 && gridController.attackInfluence[x, z] > 0)
+            {
+                unitToAttack = unit;
+                Panda.Task.current.Succeed();
+                return true;
+            }
+        }
+
+        Panda.Task.current.Fail();
+        return false;
+    }
+
+    public bool PotentialRange(int initX, int initZ, int objX, int objZ, int range)
+    {
+        return Mathf.Abs(initX - objX) + Mathf.Abs(initZ - objZ) <= range;
+    }
+
+    [Panda.Task]
+    public void TryToKill()
+    {
+        if (unitToAttack == null)
+        {
+            Panda.Task.current.Fail();
+            return;
+        }
+        int ax = (int)unitToAttack.transform.position.x;
+        int az = (int)unitToAttack.transform.position.z;
+        if (gridController.attackInfluence[ax, az] >= unitToAttack.vida)
+        {
+            foreach (Unit u in gridController.iaUnits)
+            {
+                int ux = (int)u.transform.position.x;
+                int uz = (int)u.transform.position.z;
+                if (u.ataque > 0 && !u.hasAttacked && PotentialRange(ax, az, ux, uz, u.rangoDeAtaque + u.remainingMoves))
+                {
+                    if (PotentialRange(ax, az, ux, uz, u.rangoDeAtaque))
+                    {
+                        Attack(u, ax, az);
+                    }
+                    else
+                    {
+                        MoveUnit(u, ax, az);
+                        if (PotentialRange(ax, az, ux, uz, u.rangoDeAtaque))
+                        {
+                            Attack(u, ax, az);
+                        }
+                    }
+
+                    if (unitToAttack.IsDead()) { break; }
+                }
+            }
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+            return;
+        }
+
+        if (unitToAttack.IsDead())
+        {
+            Panda.Task.current.Succeed();
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+        }
+    }
+
+    [Panda.Task]
+    public void AttackOnce()
+    {
+        int ax = (int)unitToAttack.transform.position.x;
+        int az = (int)unitToAttack.transform.position.z;
+        int ux = -1;
+        int uz = -1;
+
+        bool canAttackDirect = false;
+        int bestAttack = 0;
+        Unit bestUnit = null;
+        if (gridController.attackInfluence[ax, az] > 0)
+        {
+            foreach (Unit u in gridController.iaUnits)
+            {
+                ux = (int)u.transform.position.x;
+                uz = (int)u.transform.position.z;
+                if (u.ataque > 0 && !u.hasAttacked && PotentialRange(ax, az, ux, uz, u.rangoDeAtaque + u.remainingMoves))
+                {
+                    bool thisAttack = PotentialRange(ax, az, ux, uz, u.rangoDeAtaque);
+                    if (!canAttackDirect)
+                    {
+                        if (thisAttack)
+                        {
+                            canAttackDirect = true;
+                            bestAttack = u.ataque;
+                            bestUnit = u;
+                        } else
+                        {
+                            if (!canAttackDirect && bestAttack<u.ataque)
+                            {
+                                bestAttack = u.ataque;
+                                bestUnit = u;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+        }
+
+
+        //estar en rango
+        //mejor ataque si estan varias
+        //si no estan, mejor ataque tambien
+        if (bestUnit != null)
+        {
+            ux = (int)bestUnit.transform.position.x;
+            uz = (int)bestUnit.transform.position.z;
+            if (canAttackDirect)
+            {
+                Attack(bestUnit, ax, az);
+            }
+            else
+            {
+                MoveUnit(bestUnit, ax, az);
+                if (PotentialRange(ax, az, ux, uz, bestUnit.rangoDeAtaque))
+                {
+                    Attack(bestUnit, ax, az);
+                }
+            }
+            Panda.Task.current.Succeed();
+        } else
+        {
+            Panda.Task.current.Fail();
+        }
+    }
+
+    [Panda.Task]
+    public bool CanAttackBase()
+    {
+        return gridController.attackInfluence[otherBaseX, otherBaseZ] > 0f;
+    }
+
+    [Panda.Task]
+    public void AttackBaseOnce()
+    {
+        int ax = otherBaseX;
+        int az = otherBaseZ;
+        int ux = -1, uz = -1;
+        bool canAttackDirect = false;
+        int bestAttack = 0;
+        Unit bestUnit = null;
+        if (gridController.attackInfluence[ax, az] > 0)
+        {
+            foreach (Unit u in gridController.iaUnits)
+            {
+                ux = (int)u.transform.position.x;
+                uz = (int)u.transform.position.z;
+                if (u.ataque > 0 && !u.hasAttacked && PotentialRange(ax, az, ux, uz, u.rangoDeAtaque + u.remainingMoves))
+                {
+                    bool thisAttack = PotentialRange(ax, az, ux, uz, u.rangoDeAtaque);
+                    if (!canAttackDirect)
+                    {
+                        if (thisAttack)
+                        {
+                            canAttackDirect = true;
+                            bestAttack = u.ataque;
+                            bestUnit = u;
+                        }
+                        else
+                        {
+                            if (!canAttackDirect && bestAttack < u.ataque)
+                            {
+                                bestAttack = u.ataque;
+                                bestUnit = u;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+        }
+
+
+        //estar en rango
+        //mejor ataque si estan varias
+        //si no estan, mejor ataque tambien
+        if (bestUnit != null)
+        {
+            ux = (int)bestUnit.transform.position.x;
+            uz = (int)bestUnit.transform.position.z;
+            if (canAttackDirect)
+            {
+                Attack(bestUnit, ax, az);
+            }
+            else
+            {
+                MoveUnit(bestUnit, ax, az);
+                if (PotentialRange(ax, az, ux, uz, bestUnit.rangoDeAtaque))
+                {
+                    Attack(bestUnit, ax, az);
+                }
+            }
+            Panda.Task.current.Succeed();
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+        }
+    }
 }

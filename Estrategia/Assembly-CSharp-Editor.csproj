@@ -62,12 +62,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\DrawArrow.cs" />
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\GoapAgentEditor.cs" />
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\ActionNode.cs" />
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\GoalNode.cs" />
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\Node.cs" />
-    <Compile Include="Assets\GOAP assets\GOAP\Editor\NodeView\NodeViewWindow.cs" />
     <Compile Include="Assets\PandaBehaviour\Core\Editor\CreatePandaScriptMenu.cs" />
     <Compile Include="Assets\PandaBehaviour\Core\Editor\PandaBehaviourEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">

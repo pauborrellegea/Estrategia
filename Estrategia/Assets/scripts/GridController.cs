@@ -94,11 +94,11 @@ public class GridController : MonoBehaviour
         terrainMobility = new float[rows, cols];
 
         //parametros aleatorios
-        baseImportance = Random.Range(7f, 15f);
-        attackImportance = Random.Range(1f, 10f);
-        otherAttackImportance = Random.Range(1f, 10f);
-        explorationImportance = Random.Range(1f, 10f);
-        mobilityImportance = Random.Range(1f, 10f);
+        baseImportance = Random.Range(20f, 100f);
+        attackImportance = Random.Range(5f, 70f);
+        otherAttackImportance = Random.Range(5f, 70f);
+        explorationImportance = Random.Range(5f, 70f);
+        mobilityImportance = Random.Range(5f, 70f);
 
 
         unitsWeight = new float[System.Enum.GetNames(typeof(UnitType)).Length];
