@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
 
     public Unit[] spawnableUnits;
 
-    private float timePerTurn = 20f;
+    private float timePerTurn = 30f;
     private float ticks;
 
     private int turnsElapsed;

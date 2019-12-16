@@ -10,6 +10,8 @@ public class HumanController : Player
     public GameObject circuloSeleccion;
     public GameObject circuloHighlight;
 
+    public Slider lifeSlider;
+
     private Unit selectedUnit;
     private int selectedX, selectedZ;
 
@@ -110,7 +112,7 @@ public class HumanController : Player
             if (gridController.CanSpawnUnit(spawnX, spawnZ))
             {
                 Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
-                newUnit.SetPlayer(player);
+                newUnit.SetPlayer(player, gridController.playerBase);
 
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
                 SubstractCoins(cost);
@@ -193,6 +195,7 @@ public class HumanController : Player
 
     private void Update()
     {
+        lifeSlider.value = baseHP / 100f;
         if (Input.GetKey(KeyCode.RightArrow))
         {
             float newX = Mathf.Clamp(sceneCamera.transform.position.x + cameraSpeed * Time.deltaTime, minX, maxX);

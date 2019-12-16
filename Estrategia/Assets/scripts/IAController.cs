@@ -56,7 +56,7 @@ public class IAController : Player
             if (CanSpawn())
             {
                 Unit newUnit = Instantiate(gameController.spawnableUnits[(int)type], new Vector3(spawnX, 0f, spawnZ), transform.rotation, transform) as Unit;
-                newUnit.SetPlayer(player);
+                newUnit.SetPlayer(player, gridController.iaBase);
 
                 gridController.AddUnit(newUnit, spawnX, spawnZ);
                 SubstractCoins(cost);
@@ -438,6 +438,7 @@ public class IAController : Player
     [Panda.Task]
     public bool HasUnitsToMove()
     {
+        if (coins == 0) return false;
         foreach (Unit unit in gridController.iaUnits)
         {
             if (unit.remainingMoves > 0 && isNotBlocked(unit))

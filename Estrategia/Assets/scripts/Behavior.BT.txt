@@ -43,12 +43,9 @@ tree("Attack")
 		
 
 tree("EndTurn")
-	sequence
-		fallback
-			not HasCoins(20)
-			not CanSpawn
-			sequence
-				HasUnits
-				not HasUnitsToMove
-		Wait(1.5)
+	fallback
+		HasCoins(35)
+		sequence
+			HasUnitsToMove
+			CanSpawn
 		PassTurn

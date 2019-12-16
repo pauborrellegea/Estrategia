@@ -20,11 +20,13 @@ public class Unit : MonoBehaviour
 
     public UnitType type;
 
-    public void SetPlayer(bool p)
+    public void SetPlayer(bool p, Material m)
     {
         player = p;
         hasAttacked = false;
         remainingMoves = rangoDeMovimiento;
+
+        transform.GetChild(0).GetComponent<Renderer>().material = m;
     }
 
     public void ReceiveDamage(int amount)
