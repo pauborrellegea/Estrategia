@@ -4376,6 +4376,10 @@ MonoBehaviour:
   vida: 6
   coste: 35
   player: 0
+  hasAttacked: 0
+  remainingMoves: 0
+  dead: 0
+  type: 3
 --- !u!54 &5767547636528716095
 Rigidbody:
   m_ObjectHideFlags: 0

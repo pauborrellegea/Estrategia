@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Panda;
 
 public abstract class Player : MonoBehaviour
 {
     [HideInInspector]public bool player;
-    [HideInInspector]public int coins = 0;
+    public int coins = 0;
 
     public GameObject attackPrefab;
 
@@ -49,7 +48,7 @@ public abstract class Player : MonoBehaviour
         otherBaseZ = z;
     }
 
-    [Panda.Task]
+    
     public void EndTurn()
     {
         if (gameController.turnOfPlayer() != player) return;

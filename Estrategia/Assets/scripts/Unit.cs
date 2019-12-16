@@ -18,6 +18,8 @@ public class Unit : MonoBehaviour
 
     public bool dead = false;
 
+    public UnitType type;
+
     public void SetPlayer(bool p)
     {
         player = p;

@@ -29,8 +29,8 @@ public class GridController : MonoBehaviour
 
     public Transform scene;
 
-    private List<Unit> iaUnits;
-    private List<Unit> playerUnits;
+    public List<Unit> iaUnits;
+    public List<Unit> playerUnits;
 
     //Grids globales
     private Casilla[,] gridCells;
@@ -65,6 +65,8 @@ public class GridController : MonoBehaviour
     public float explorationImportance;
     public float mobilityImportance;
 
+    public float[] unitsWeight;
+
 
     void Awake()
     {
@@ -97,6 +99,21 @@ public class GridController : MonoBehaviour
         otherAttackImportance = Random.Range(1f, 10f);
         explorationImportance = Random.Range(1f, 10f);
         mobilityImportance = Random.Range(1f, 10f);
+
+
+        unitsWeight = new float[System.Enum.GetNames(typeof(UnitType)).Length];
+
+        float total = 0f;
+        for (int i = 0; i< unitsWeight.Length; i++)
+        {
+            unitsWeight[i] = attackImportance * gameController.spawnableUnits[i].ataque + otherAttackImportance * gameController.spawnableUnits[i].rangoDeAtaque +
+                explorationImportance * gameController.spawnableUnits[i].vision + mobilityImportance * gameController.spawnableUnits[i].rangoDeMovimiento;
+            total += unitsWeight[i];
+        }
+        for (int i = 0; i < unitsWeight.Length; i++)
+        {
+            unitsWeight[i] = unitsWeight[i] / total;
+        }
 
 
         GenerateMap();
@@ -197,6 +214,37 @@ public class GridController : MonoBehaviour
     public Casilla GetCell(int x, int z)
     {
         return gridCells[x, z];
+    }
+
+    public Unit GetSeenUnit(int x, int z)
+    {
+        return unitsSeen[x, z];
+    }
+
+    public Casilla GetSeenCell(int x, int z)
+    {
+        return terrainSeen[x, z];
+    }
+
+    public void GetBestInfluence(ref int bestX, ref int bestZ)
+    {
+        float bestInfluence = Mathf.Infinity;
+        for (int x = 0; x<rows; x++)
+        {
+            for (int z = 0; z < cols; z++)
+            {
+                if (!(x==gameController.player.spawnX && z==gameController.player.spawnZ) && !(x == gameController.ia.spawnX && z == gameController.ia.spawnZ))
+                {
+                    float inf = TacticMoveCost(x, z);
+                    if (inf < bestInfluence)
+                    {
+                        bestInfluence = inf;
+                        bestX = x;
+                        bestZ = z;
+                    }
+                }
+            }
+        }
     }
 
     public void MoveUnit(Unit unit, int toX, int toZ)

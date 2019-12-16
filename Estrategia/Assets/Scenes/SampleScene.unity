@@ -292,12 +292,15 @@ MonoBehaviour:
   cols: 30
   forestCost: 2
   scene: {fileID: 1743646994}
+  iaUnits: []
+  playerUnits: []
   maxAtackInf: 0
   baseImportance: 0
   attackImportance: 0
   otherAttackImportance: 0
   explorationImportance: 0
   mobilityImportance: 0
+  unitsWeight: []
 --- !u!1 &278185923
 GameObject:
   m_ObjectHideFlags: 0
@@ -1055,8 +1058,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1.558681e+28, y: 1.5526857e+26, z: 7.6589554e+28,
-    w: 1.0597115e-38}
+  m_BoundingSphereOverride: {x: 4.5918e-41, y: 0, z: 2.3509887e-38, w: 2.910827e-11}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

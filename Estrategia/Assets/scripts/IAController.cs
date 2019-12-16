@@ -81,11 +81,6 @@ public class IAController : Player
         int x = initX;
         int z = initZ;
 
-        for (int i = 0; i<listMoves.Count; i++)
-        {
-            Debug.Log(listMoves[i].x + " " + listMoves[i].z);
-        }
-
         if (possibleMoves > 0)
         {
             x = listMoves[listMoves.Count - possibleMoves].x;
@@ -101,6 +96,7 @@ public class IAController : Player
     {
         //nada que resetear
     }
+
 
     public bool HasCoinsFor(UnitType type)
     {
@@ -180,7 +176,7 @@ public class IAController : Player
             if (x > 0)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x - 1, z);
-                if (gridController.GetCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x - 1, z) == null)
+                if (gridController.GetSeenCell(x - 1, z)==null || (gridController.GetSeenCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x - 1, z) == null))
                     if (moves[x - 1, z] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x - 1, z);
@@ -195,7 +191,7 @@ public class IAController : Player
             if (x < gridController.rows - 1)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x + 1, z);
-                if (gridController.GetCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x + 1, z) == null)
+                if (gridController.GetSeenCell(x + 1, z) == null || (gridController.GetSeenCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x + 1, z) == null))
                     if (moves[x + 1, z] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x + 1, z);
@@ -211,7 +207,7 @@ public class IAController : Player
             if (z > 0)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z - 1);
-                if (gridController.GetCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z - 1) == null)
+                if (gridController.GetSeenCell(x, z - 1) == null || (gridController.GetSeenCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x, z - 1) == null))
                     if (moves[x, z - 1] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z - 1);
@@ -227,7 +223,7 @@ public class IAController : Player
             if (z < gridController.cols - 1)
             {
                 float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z + 1);
-                if (gridController.GetCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z + 1) == null)
+                if (gridController.GetSeenCell(x, z + 1) == null || (gridController.GetSeenCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetSeenCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetSeenUnit(x, z + 1) == null))
                     if (moves[x, z + 1] == null)
                     {
                         SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z + 1);
@@ -284,9 +280,9 @@ public class IAController : Player
     }
 
     [Panda.Task]
-    bool HasCoins()
+    bool HasCoins(int x=0)
     {
-        return coins > 0;
+        return coins > x;
     }
 
     [Panda.Task]
@@ -302,13 +298,6 @@ public class IAController : Player
         {
             Panda.Task.current.Fail();
         }
-    }
-
-    private IEnumerator CreateBasicUnit(float delay)
-    {
-        
-
-        yield return new WaitForSeconds(delay);
     }
 
     [Panda.Task]
@@ -333,7 +322,115 @@ public class IAController : Player
                 Panda.Task.current.Succeed();
             }
         }
+    }
+
+    [Panda.Task]
+    public void MoveUnitWithInfluence()
+    {
+        if (!HasCoins())
+        {
+            Panda.Task.current.Fail();
+        }
+        else
+        {
+            Unit unit = UnitLessInfluence();
+
+            if (unit == null)
+            {
+                Panda.Task.current.Fail();
+            }
+            else
+            {
+                int x = 0;
+                int z = 0;
+
+                gridController.GetBestInfluence(ref x, ref z);
+
+                MoveUnit(unit, x, z);
+
+                Panda.Task.current.Succeed();
+            }
+        }
+    }
+
+    [Panda.Task]
+    public bool HasUnits()
+    {
+        return gridController.iaUnits.Count > 0;
+    }
+
+    public Unit UnitLessInfluence()
+    {
+        float lessInf = -Mathf.Infinity;
+        Unit worseUnit = null;
+
+        foreach (Unit u in gridController.iaUnits)
+        {
+            float inf = gridController.TacticMoveCost((int)u.transform.position.x, (int)u.transform.position.z);
+            if (u.remainingMoves>0 && inf > lessInf)
+            {
+                lessInf = inf;
+                worseUnit = u;
+            }
+        }
+        return worseUnit;
+    }
+
+    [Panda.Task]
+    public void CreateControlledUnit()
+    {
+        int s = nextSpawnUnit();
+        if (HasCoinsFor((UnitType)s) && CanSpawn())
+        {
+            CreateUnit((UnitType)s);
+
+            Panda.Task.current.Succeed();
+        }
+        else
+        {
+            Panda.Task.current.Fail();
+        }
+    }
+
+    [Panda.Task]
+    public void PassTurn()
+    {
+        EndTurn();
+        Panda.Task.current.Succeed();
+    }
+
+
+    public int nextSpawnUnit()
+    {
+        float[] unitsAmount = new float[gridController.unitsWeight.Length];
+
+        int total = 0;
+
+        foreach (Unit unit in gridController.iaUnits)
+        {
+            unitsAmount[(int)unit.type]++;
+            total++;
+        }
         
+
+        float min = Mathf.Infinity;
+        int bestI = -1;
+
+        for (int i = 0; i < unitsAmount.Length; i++)
+        {
+            float w = -gridController.unitsWeight[i];
+            if (total > 0)
+            {
+                w += unitsAmount[i] / total;
+            }
+            if (w < min)
+            {
+                min = w;
+                bestI = i;
+            }
+        }
+
+        return bestI;
     }
 
 }

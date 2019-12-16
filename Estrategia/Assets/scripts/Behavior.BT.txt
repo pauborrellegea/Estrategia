@@ -1,13 +1,26 @@
 tree("Root")
 	sequence
 		isTurn
-		parallel
+		random
 			tree("CreateUnit")
+			tree("MoveUnit")
+			tree("EndTurn")
 
 tree("CreateUnit")
 	sequence
 		fallback
 			MoveUnitFromSpawn
-			CreateBasic
+			CreateControlledUnit
 		Wait(1.0)
 		MoveUnitFromSpawn
+
+
+tree("MoveUnit")
+	sequence
+		HasUnits
+		MoveUnitWithInfluence
+
+tree("EndTurn")
+	sequence
+		not HasCoins(20)
+		PassTurn
