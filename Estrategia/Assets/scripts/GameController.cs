@@ -93,8 +93,11 @@ public class GameController : MonoBehaviour
         turnsElapsed += 1;
         if (turnsElapsed >= 2)
         {
-            coinsPerTurn += 2;
-            turnsElapsed -= 2;
+            if (coinsPerTurn < 36)
+            {
+                coinsPerTurn += 2;
+                turnsElapsed -= 2;
+            }
         }
 
         gridController.resetAllUnits();
