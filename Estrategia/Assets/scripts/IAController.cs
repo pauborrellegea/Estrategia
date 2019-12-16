@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CielaSpike;
+using Panda;
 
 public class IAController : Player
 {
-    List<Direction> lista;
 
     private void Start()
     {
-        lista = new List<Direction>();
         player = false;
     }
 
@@ -74,70 +73,28 @@ public class IAController : Player
         int initX = (int)unit.transform.position.x;
         int initZ = (int)unit.transform.position.z;
 
-        Dijkstra(newX, newZ, initX, initZ);
+        //this.StartCoroutineAsync(Dijkstra(newX, newZ, initX, initZ));
+        List<SingleMove>  listMoves = Dijkstra(newX, newZ, initX, initZ);
 
         //mover hasta donde se pueda (de 1 en 1)
-        int possibleMoves = Mathf.Min(unit.remainingMoves, coins);
-        int currentMoves = 0;
+        int possibleMoves = Mathf.Min(unit.remainingMoves, coins, listMoves.Count);
         int x = initX;
         int z = initZ;
-        while (lista.Count > 0)
+
+        for (int i = 0; i<listMoves.Count; i++)
         {
-            Direction dir = lista[lista.Count - 1];
-            lista.RemoveAt(lista.Count - 1);
-
-            int nx = x;
-            int nz = z;
-
-            if (dir == Direction.LEFT)
-            {
-                nx = x + 1;
-                nz = z;
-            } else if (dir == Direction.RIGHT)
-            {
-                nx = x - 1;
-                nz = z;
-            } else if (dir == Direction.UP)
-            {
-                nz = z- 1;
-                nx = x;
-            } else if (dir == Direction.DOWN)
-            {
-                nz = z + 1;
-                nx = x;
-            }
-
-            Casilla cell = gridController.GetCell(x, z);
-
-            if (cell.type == Casilla.CellType.GRASS)
-            {
-                currentMoves++;
-                if (currentMoves <= possibleMoves)
-                {
-                    x = nx;
-                    z = nz;
-                } else
-                {
-                    break;
-                }
-            } else if (cell.type == Casilla.CellType.FOREST)
-            {
-                currentMoves += gridController.forestCost;
-                if (currentMoves <= possibleMoves)
-                {
-                    x = nx;
-                    z = nz;
-                }
-                else
-                {
-                    break;
-                }
-            }
+            Debug.Log(listMoves[i].x + " " + listMoves[i].z);
         }
 
-        gridController.MoveUnit(unit, x, z);
-        SubstractCoins(currentMoves);
-        unit.substractMoves(currentMoves);
+        if (possibleMoves > 0)
+        {
+            x = listMoves[listMoves.Count - possibleMoves].x;
+            z = listMoves[listMoves.Count - possibleMoves].z;
+
+            gridController.MoveUnit(unit, x, z);
+            SubstractCoins(possibleMoves);
+            unit.substractMoves(possibleMoves);
+        }
     }
 
     public override void resetEndTurn()
@@ -160,11 +117,12 @@ public class IAController : Player
         return coins >= attackCost;
     }
 
+    [Panda.Task]
     public bool isTurn()
     {
         return gameController.turnOfPlayer() == player;
     }
-
+    
     public bool CanSpawn()
     {
         return gridController.CanSpawnUnit(spawnX, spawnZ);
@@ -179,11 +137,11 @@ public class IAController : Player
     {
         float bestCost = Mathf.Infinity;
 
-        for (int x = 0; x< gridController.rows; x++)
+        for (int x = 0; x < gridController.rows; x++)
         {
             for (int z = 0; z < gridController.cols; z++)
             {
-                if (moves[x, z]!=null)
+                if (moves[x, z] != null)
                 {
                     float c = gridController.TacticMoveCost(x, z);
                     if (c < bestCost)
@@ -198,122 +156,115 @@ public class IAController : Player
     }
 
 
-    public IEnumerator Dijkstra(int objX, int objZ, int initX, int initZ)
+    public List<SingleMove> Dijkstra(int objX, int objZ, int initX, int initZ)
     {
         List<SingleMove> queue = new List<SingleMove>();
 
         SingleMove[,] moves = new SingleMove[gridController.rows, gridController.cols];
 
-        moves[initX, initZ] = new SingleMove(0f, Direction.NONE, initX, initZ);
+        moves[initX, initZ] = new SingleMove(0f, null, initX, initZ);
         queue.Add(moves[initX, initZ]);
 
         int x, z;
+        SingleMove lastMove = null;
 
         while (queue.Count > 0)
         {
-            SingleMove move = getMin(ref queue);
-            queue.Remove(move);
-            x = move.x;
-            z = move.z;
+            lastMove = getMin(ref queue);
+            queue.Remove(lastMove);
+            x = lastMove.x;
+            z = lastMove.z;
 
-            if (x==objX && z == objZ)
-            {
-                break;
-            }
-            
+            //Debug.Log(moves[x, z].x + " " + moves[x, z].z + ":" + x + " " + z);
+
             if (x > 0)
             {
-                float pesoSig = move.cost + gridController.TacticMoveCost(x - 1, z);
-                if (gridController.GetCell(x - 1, z).type!=Casilla.CellType.MOUNTAIN && gridController.GetCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x - 1, z) == null)
+                float pesoSig = lastMove.cost + gridController.TacticMoveCost(x - 1, z);
+                if (gridController.GetCell(x - 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x - 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x - 1, z) == null)
                     if (moves[x - 1, z] == null)
                     {
-                        SingleMove newMove = new SingleMove(pesoSig, Direction.RIGHT, x - 1, z);
+                        SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x - 1, z);
                         moves[x - 1, z] = newMove;
                         queue.Add(newMove);
                     } else if (moves[x - 1, z].cost > pesoSig)
                     {
                         moves[x - 1, z].cost = pesoSig;
-                        moves[x - 1, z].comesFrom = Direction.RIGHT;
+                        moves[x - 1, z].comesFrom = moves[x, z];
                     }
             }
             if (x < gridController.rows - 1)
             {
-                float pesoSig = move.cost + gridController.TacticMoveCost(x + 1, z);
+                float pesoSig = lastMove.cost + gridController.TacticMoveCost(x + 1, z);
                 if (gridController.GetCell(x + 1, z).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x + 1, z).type != Casilla.CellType.TOWER && gridController.GetUnit(x + 1, z) == null)
                     if (moves[x + 1, z] == null)
                     {
-                        SingleMove newMove = new SingleMove(pesoSig, Direction.LEFT, x + 1, z);
+                        SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x + 1, z);
                         moves[x + 1, z] = newMove;
                         queue.Add(newMove);
                     }
                     else if (moves[x + 1, z].cost > pesoSig)
                     {
                         moves[x + 1, z].cost = pesoSig;
-                        moves[x + 1, z].comesFrom = Direction.LEFT;
+                        moves[x + 1, z].comesFrom = moves[x, z];
                     }
             }
             if (z > 0)
             {
-                float pesoSig = move.cost + gridController.TacticMoveCost(x, z - 1);
+                float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z - 1);
                 if (gridController.GetCell(x, z - 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z - 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z - 1) == null)
                     if (moves[x, z - 1] == null)
                     {
-                        SingleMove newMove = new SingleMove(pesoSig, Direction.UP, x, z - 1);
+                        SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z - 1);
                         moves[x, z - 1] = newMove;
                         queue.Add(newMove);
                     }
                     else if (moves[x, z - 1].cost > pesoSig)
                     {
                         moves[x, z - 1].cost = pesoSig;
-                        moves[x, z - 1].comesFrom = Direction.UP;
+                        moves[x, z - 1].comesFrom = moves[x, z];
                     }
             }
             if (z < gridController.cols - 1)
             {
-                float pesoSig = move.cost + gridController.TacticMoveCost(x, z + 1);
-                if (gridController.GetCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z + 1)==null)
+                float pesoSig = lastMove.cost + gridController.TacticMoveCost(x, z + 1);
+                if (gridController.GetCell(x, z + 1).type != Casilla.CellType.MOUNTAIN && gridController.GetCell(x, z + 1).type != Casilla.CellType.TOWER && gridController.GetUnit(x, z + 1) == null)
                     if (moves[x, z + 1] == null)
                     {
-                        SingleMove newMove = new SingleMove(pesoSig, Direction.DOWN, x, z + 1);
+                        SingleMove newMove = new SingleMove(pesoSig, moves[x, z], x, z + 1);
                         moves[x, z + 1] = newMove;
                         queue.Add(newMove);
                     }
                     else if (moves[x, z + 1].cost > pesoSig)
                     {
                         moves[x, z + 1].cost = pesoSig;
-                        moves[x, z + 1].comesFrom = Direction.DOWN;
+                        moves[x, z + 1].comesFrom = moves[x, z];
                     }
             }
         }
 
-        lista = new List<Direction>();
 
-        x = objX;
-        z = objZ;
 
-        while(x!=initX && z != objZ)
+        SingleMove obj = moves[objX, objZ];
+        if (obj == null)
         {
-            Direction dir = moves[x, z].comesFrom;
-            if (dir == Direction.DOWN)
-            {
-                z -= 1;
-            } else if (dir == Direction.UP)
-            {
-                z += 1;
-            } else if (dir == Direction.LEFT)
-            {
-                x -= 1;
-            } else if (dir == Direction.RIGHT)
-            {
-                x += 1;
-            } else
-            {
-                break;
-            }
-            lista.Add(dir);
+            obj = lastMove;
         }
 
-        yield return Ninja.JumpToUnity;
+        List<SingleMove> listMoves = new List<SingleMove>();
+
+        //listMoves.Add(obj);
+        
+
+        while (obj!=null && !(obj.x == initX && obj.z == initZ))
+        {
+            listMoves.Add(obj);
+            obj = obj.comesFrom;
+        }
+
+        //listMoves.Add(moves[initX, initZ]);
+
+        return listMoves;
+        //yield return Ninja.JumpToUnity;
     }
 
     public SingleMove getMin(ref List<SingleMove> cola)
@@ -322,7 +273,7 @@ public class IAController : Player
         SingleMove best = null;
         foreach (SingleMove move in cola)
         {
-            if (move.cost<min)
+            if (move.cost < min)
             {
                 min = move.cost;
                 best = move;
@@ -332,23 +283,57 @@ public class IAController : Player
         return best;
     }
 
-
-
-    //move unit at spawn
-    public void MoveUnitAtSpawn()
+    [Panda.Task]
+    bool HasCoins()
     {
-        Unit unit = gridController.GetUnit(spawnX, spawnZ);
-        if (unit != null)
+        return coins > 0;
+    }
+
+    [Panda.Task]
+    public void CreateBasic()
+    {
+        if (HasCoinsFor(UnitType.BASICA) && CanSpawn())
         {
-            SingleMove[,] moves = new SingleMove[gridController.rows, gridController.cols];
+            CreateUnit(UnitType.BASICA);
 
-            gridController.SetMovement(unit, ref moves);
-
-            int x = 0, z = 0;
-
-            GetBestPosition(ref moves, ref x, ref z);
-
-            MoveUnit(unit, x, z);
+            Panda.Task.current.Succeed();
+        }
+        else
+        {
+            Panda.Task.current.Fail();
         }
     }
+
+    private IEnumerator CreateBasicUnit(float delay)
+    {
+        
+
+        yield return new WaitForSeconds(delay);
+    }
+
+    [Panda.Task]
+    public void MoveUnitFromSpawn()
+    {
+        if (!HasCoins())
+        {
+            Panda.Task.current.Fail();
+        }
+        else
+        {
+            Unit unit = gridController.GetUnit(spawnX, spawnZ);
+
+            if (unit == null)
+            {
+                Panda.Task.current.Fail();
+            }
+            else
+            {
+                MoveUnit(unit, otherBaseX-1, otherBaseZ);
+
+                Panda.Task.current.Succeed();
+            }
+        }
+        
+    }
+
 }

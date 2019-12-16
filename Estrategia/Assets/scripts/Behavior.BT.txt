@@ -1,0 +1,13 @@
+tree("Root")
+	sequence
+		isTurn
+		parallel
+			tree("CreateUnit")
+
+tree("CreateUnit")
+	sequence
+		fallback
+			MoveUnitFromSpawn
+			CreateBasic
+		Wait(1.0)
+		MoveUnitFromSpawn

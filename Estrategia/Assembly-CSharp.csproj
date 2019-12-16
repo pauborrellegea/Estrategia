@@ -134,6 +134,7 @@
     <None Include="Assets\PandaBehaviour\Examples\03_Shooter\Assets\GameController.BT.txt" />
     <None Include="Assets\unidades\basica\shaders\doublesidedshader.shader" />
     <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\PlayTag.commented.BT.txt" />
+    <None Include="Assets\scripts\Behavior.BT.txt" />
     <None Include="Assets\PandaBehaviour\Examples\02_PlayTag\Assets\PlayTag.BT.txt" />
     <None Include="Assets\PandaBehaviour\ChangeLog.txt" />
     <Reference Include="Unity.Timeline.Editor">

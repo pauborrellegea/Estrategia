@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Panda;
 
 public abstract class Player : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public abstract class Player : MonoBehaviour
         otherBaseZ = z;
     }
 
+    [Panda.Task]
     public void EndTurn()
     {
         if (gameController.turnOfPlayer() != player) return;
