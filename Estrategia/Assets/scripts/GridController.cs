@@ -983,10 +983,46 @@ public class GridController : MonoBehaviour
         if (map == MapDisplay.OTHER_ATT_INF) { return GenerateTexture(ref otherSeenAttackInfluence); }
         if (map == MapDisplay.EXPLORATION_INF) { return GenerateTexture(ref explorationInfluence); }
         if (map == MapDisplay.TERRAIN_INF) { return GenerateTexture(ref terrainMobility); }
-
+        if (map == MapDisplay.COMPLETE_INFLUENCE) { return GenComplete(); }
 
         return new Texture2D(rows, cols);
 
+    }
+
+    Texture2D GenComplete()
+    {
+        float[,] matrix = new float[rows, cols];
+
+        Texture2D texture = new Texture2D(rows, cols);
+        texture.filterMode = FilterMode.Point;
+
+        float max = -Mathf.Infinity;
+        float min = Mathf.Infinity;
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                matrix[x, y] = TacticMoveCost(x, y);
+                if (matrix[x, y] > max) max = matrix[x, y];
+                if (matrix[x, y] < min) min = matrix[x, y];
+            }
+        }
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                if (max == min) texture.SetPixel(x, y, Color.black);
+                else
+                {
+                    float sample = 1f - (matrix[x, y] - min) / (max - min);
+                    texture.SetPixel(x, y, new Color(sample, sample, sample));
+                }
+            }
+        }
+        texture.Apply();
+        return texture;
     }
 
     Texture2D GenerateTexture(ref Casilla[,] matrix)
@@ -1125,7 +1161,7 @@ public class GridController : MonoBehaviour
 
 public enum MapDisplay
 {
-    RAWCELLS, RAWUNITS, PL_ATTACK, PL_VISIBILITY, IA_VISIBILITY, BASE_INF, SEEN_MAP_RAW, SEEN_UNITS_RAW, IA_ATT_INF, OTHER_ATT_INF, EXPLORATION_INF, TERRAIN_INF
+    RAWCELLS, RAWUNITS, PL_ATTACK, PL_VISIBILITY, IA_VISIBILITY, BASE_INF, SEEN_MAP_RAW, SEEN_UNITS_RAW, IA_ATT_INF, OTHER_ATT_INF, EXPLORATION_INF, TERRAIN_INF, COMPLETE_INFLUENCE
 }
 
 
